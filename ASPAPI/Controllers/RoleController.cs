@@ -43,7 +43,7 @@ namespace ASPAPI.Controllers {
             {
                 return BadRequest("Не задана новая роль/имя");
             }
-         var roleToUpdate = dbContext.Roles.FirstOrDefault(r => Role.name == name);
+         var roleToUpdate = dbContext.Roles.FirstOrDefault(r => r.Name == name);
 
             if (roleToUpdate == null) return NotFound("Такой роли не существует");
 
@@ -61,7 +61,7 @@ namespace ASPAPI.Controllers {
             {
                 return BadRequest("Не задана изменяемая роль/имя");
             }
-            var roleToDelete = dbContext.Roles.FirstOrDefault(r => Role.name == name);
+            var roleToDelete = dbContext.Roles.FirstOrDefault(r => r.Name == name);
             if (roleToDelete == null) return NotFound("Такой роли не существует");
             roleToDelete.Name = name;
             dbContext.Roles.Remove(roleToDelete);   
