@@ -1,11 +1,11 @@
-﻿using System;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
 using ASPAPI.Services;
 
 namespace ASPAPI.Controllers
 {
-     public record OrderDto(int id, string name, DateTime dtAndTime, int userid);
+     public record OrderDto(string name, DateTime dtAndTime, int userid);
     [Route("[controller]/[action]")]
     [ApiController]
 
@@ -28,11 +28,13 @@ namespace ASPAPI.Controllers
         {
             if (string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Заполните название / никнейм заказа");
+            if (data.userid == 0 || data.userid == ' ')
+                return BadRequest("Не передан ID пользователя");
 
             var order = new Order
-            { Name = data.name, Date = DateTime.Now, UserId = data.userid, 
-                User = dbContext.Users.FirstOrDefault(u => u.Id == data.id) };
-            Console.WriteLine(order);
+            { Name = data.name, Date = data.dtAndTime, UserId = data.userid, 
+                User = dbContext.Users.FirstOrDefault(u => u.Id == data.userid) };
+        //  Console.WriteLine(order);
             dbContext.Orders.Add(order);
             dbContext.SaveChanges();
             return Ok();
@@ -56,7 +58,7 @@ namespace ASPAPI.Controllers
             if (string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Заполните название / никнейм заказа");
 
-            var OrderToUpdate = dbContext.Orders.FirstOrDefault(o => o.Id == data.id);
+            var OrderToUpdate = dbContext.Orders.FirstOrDefault(o => o.Id == data.userid);
             if (OrderToUpdate == null)
                 return NotFound("Такого заказа не существует");
 
