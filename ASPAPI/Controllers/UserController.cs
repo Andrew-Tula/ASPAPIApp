@@ -33,6 +33,7 @@ namespace ASPAPI.Controllers {
                 Name = data.name,
                 RoleId = role.Id,
             };
+          //  Console.WriteLine(user);
             dbContext.Users.Add(user);
             dbContext.SaveChanges();
             return Ok();
