@@ -1,17 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace ASPAPI.Models.DbEntities {
+namespace ASPAPI.Models.DbEntities 
+{
     public class OrderItem {
 #nullable disable
         public int Id { get; set; }
+
+        public int ProductCount { get; set; }
 
         [ForeignKey(nameof(ProductId))]
         public int ProductId { get; set; }
         [JsonIgnore]
         public Product Product { get; set; }
 
-        public int Count { get; set; }
+       
 
         [ForeignKey(nameof(OrderId))]
         public int OrderId { get; set; }

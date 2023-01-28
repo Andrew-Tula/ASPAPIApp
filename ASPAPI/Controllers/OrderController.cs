@@ -1,11 +1,10 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
 using ASPAPI.Services;
 
 namespace ASPAPI.Controllers
 {
-     public record OrderDto(string name, DateTime dtAndTime, int userid);
+    public record OrderDto(string name, DateTime dtAndTime, int userid);
     [Route("[controller]/[action]")]
     [ApiController]
 
@@ -45,7 +44,7 @@ namespace ASPAPI.Controllers
         {
             var OrderToDelete = dbContext.Orders.FirstOrDefault(o => o.Id == id);
             if (OrderToDelete == null)
-                return NotFound("Такого подукта не существует");
+                return NotFound("Такого заказа не существует");
 
             dbContext.Orders.Remove(OrderToDelete);
             dbContext.SaveChanges();
@@ -62,7 +61,7 @@ namespace ASPAPI.Controllers
             if (OrderToUpdate == null)
                 return NotFound("Такого заказа не существует");
 
-            OrderToUpdate.Name = data.name;
+          //  OrderToUpdate.Name = data.name;
             dbContext.Orders.Update(OrderToUpdate);
             dbContext.SaveChanges();
             return Ok();
