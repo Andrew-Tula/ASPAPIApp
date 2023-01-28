@@ -1,3 +1,7 @@
+using ASPAPI.Abstract.Models;
+using ASPAPI.Abstract.Repositories;
+using ASPAPI.Models.DbEntities;
+using ASPAPI.Repositories;
 using ASPAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,13 +35,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+var services = builder.Services;
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
-builder.Services.AddDbContext<TestDBContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("TestDBContext")));
+services.AddDbContext<TestDBContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("TestDBContext")));
 
+services.AddScoped<IGenericRepositories<Role>, GenericRepositories<Role>>();
+services.AddScoped<IUserRepository, UserRepository>();
+//to read
+//AddSingleton AddScoped AddTransient
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

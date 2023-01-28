@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using ASPAPI.Abstract.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace ASPAPI.Models.DbEntities 
 {
-    public class OrderItem {
+    public class OrderItem: IEntity {
 #nullable disable
         public int Id { get; set; }
 

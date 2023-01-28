@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
-using ASPAPI.Services;
+using ASPAPI.Abstract.Repositories;
 
 namespace ASPAPI.Controllers {
     public record UserDto(string name, int roleId);
@@ -9,23 +9,19 @@ namespace ASPAPI.Controllers {
     [Route("[controller]/[action]")]
     [ApiController]
     public class UserController : ControllerBase {
-        private TestDBContext dbContext;
+        private IUserRepository userRepository;
 
-        public UserController(TestDBContext dbContext) {
-            this.dbContext = dbContext;
-        }
+        public UserController(IUserRepository userRepository) => this.userRepository = userRepository;
 
         [HttpGet]
-        public IActionResult GetUsers() {
-            return Ok(dbContext.Users?.ToList());
-        }
+        public IActionResult GetUsers() => Ok(userRepository.GetAll());
 
         [HttpPost]
         public IActionResult AddUser(UserDto data) {
             if (data is null || string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Заполните данные");
 
-            var role = dbContext.Roles.FirstOrDefault(r => r.Id == data.roleId);
+            var role = userRepository.GetRole(data.roleId);
             if (role is null)
                 return NotFound("Роль не существует");
 
@@ -33,28 +29,17 @@ namespace ASPAPI.Controllers {
                 Name = data.name,
                 RoleId = role.Id,
             };
-          //  Console.WriteLine(user);
-            dbContext.Users.Add(user);
-            dbContext.SaveChanges();
+            userRepository.Add(user);
             return Ok();
         }
 
         [HttpDelete]
         public IActionResult DeleteUser(int id) {
-            //var userToDelete = null;
-            //foreach (var item in dbContext.Users) {
-            //    if (item.Id == id) {
-            //        userToDelete = item;
-            //        break;
-            //    }
-            //}
-
-            var userToDelete = dbContext.Users.FirstOrDefault(u => u.Id == id);
+            var userToDelete = userRepository.GetById(id);
             if (userToDelete is null)
                 return NotFound("Такого пользователя не существует");
 
-            dbContext.Users.Remove(userToDelete);
-            dbContext.SaveChanges();
+            userRepository.Remove(userToDelete);
             return Ok();
         }
 
@@ -63,14 +48,17 @@ namespace ASPAPI.Controllers {
             if (data is null || string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Вы не ввели Имя пользователя для изменения");
 
-            var userToUpdate = dbContext.Users.FirstOrDefault(u => u.Id == data.id);
+            var userToUpdate = userRepository.GetById(data.id);
             if (userToUpdate is null)
                 return NotFound("Такого пользователя не существует");
 
+            var role = userRepository.GetRole(data.roleId);
+            if (role is null)
+                return NotFound("Роль не существует");
+
             userToUpdate.Name = data.name;
             userToUpdate.RoleId = data.roleId;
-            dbContext.Users.Update(userToUpdate);
-            dbContext.SaveChanges();
+            userRepository.Update(userToUpdate);
             return Ok();
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
 using ASPAPI.Services;
+using ASPAPI.Abstract.Repositories;
 
 namespace ASPAPI.Controllers {
     public record RoleDto(int id, string name);
@@ -8,15 +9,13 @@ namespace ASPAPI.Controllers {
     [Route("[controller]/[action]")]
     [ApiController]
     public class RoleController : ControllerBase {
-        private TestDBContext dbContext;
-        public RoleController(TestDBContext dbContext) {
-            this.dbContext = dbContext;
+        private IGenericRepositories<Role> roleRepository;
+        public RoleController(IGenericRepositories<Role> roleRepository) {
+            this.roleRepository = roleRepository;
         }
 
         [HttpGet]
-        public IActionResult GetRoles() {
-            return Ok(dbContext.Roles?.ToList());
-        }
+        public IActionResult GetRoles() => Ok(roleRepository.GetAll());
 
         [HttpPost]
         public IActionResult AddRole(string name) {
@@ -24,10 +23,9 @@ namespace ASPAPI.Controllers {
                 return BadRequest("Заполните данные");
 
             var role = new Role {
-                Name = name,
+                Name = name
             };
-            dbContext.Roles.Add(role);
-            dbContext.SaveChanges();
+            roleRepository.Add(role);
             return Ok();
         }
 
@@ -37,25 +35,23 @@ namespace ASPAPI.Controllers {
             if (string.IsNullOrWhiteSpace(role?.name))
                 return BadRequest("Не задана изменяемая роль/имя");
 
-            var roleToUpdate = dbContext.Roles.FirstOrDefault(r => r.Id == role.id);
+            var roleToUpdate = roleRepository.GetById(role.id);
             if (roleToUpdate == null) 
                 return NotFound("Такой роли не существует");
 
             roleToUpdate.Name = role.name;
-            dbContext.Roles.Update(roleToUpdate);
-            dbContext.SaveChanges();
+            roleRepository.Update(roleToUpdate);
             return Ok();
         }
 
 
         [HttpDelete] // написать метод delete
         public IActionResult DeleteRole(int id) {
-            var roleToDelete = dbContext.Roles.FirstOrDefault(r => r.Id == id);
+            var roleToDelete = roleRepository.GetById(id);
             if (roleToDelete == null) 
                 return NotFound("Такой роли не существует");
 
-            dbContext.Roles.Remove(roleToDelete);
-            dbContext.SaveChanges();
+            roleRepository.Remove(roleToDelete);
             return Ok();
 
         }

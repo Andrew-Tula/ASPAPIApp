@@ -1,7 +1,8 @@
-﻿using System.Text.Json.Serialization;
+﻿using ASPAPI.Abstract.Models;
+using System.Text.Json.Serialization;
 
 namespace ASPAPI.Models.DbEntities {
-    public class Product {
+    public class Product: IEntity {
 #nullable disable
         public int Id { get; set; }
         public string Name { get; set; }
