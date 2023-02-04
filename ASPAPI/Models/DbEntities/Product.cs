@@ -10,6 +10,9 @@ namespace ASPAPI.Models.DbEntities {
 
         [JsonIgnore]
         public List<OrderItem> OrderItems { get; set; }
+
+        [JsonIgnore]
+        public List<Store> Stores { get; set; }
 #nullable restore
     }
 }

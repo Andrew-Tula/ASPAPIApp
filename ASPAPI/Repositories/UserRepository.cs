@@ -4,7 +4,7 @@ using ASPAPI.Services;
 
 namespace ASPAPI.Repositories
 {
-    public class UserRepository : GenericRepositories<User>, IUserRepository {
+    public class UserRepository : GenericRepository<User>, IUserRepository {
         public UserRepository(TestDBContext dbContext) : base(dbContext) { }
 
         public Role? GetRole(int id) => dbContext.Roles.FirstOrDefault(r => r.Id == id);

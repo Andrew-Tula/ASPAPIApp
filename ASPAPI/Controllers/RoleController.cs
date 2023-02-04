@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
-using ASPAPI.Services;
 using ASPAPI.Abstract.Repositories;
 
 namespace ASPAPI.Controllers {
@@ -9,8 +8,10 @@ namespace ASPAPI.Controllers {
     [Route("[controller]/[action]")]
     [ApiController]
     public class RoleController : ControllerBase {
-        private IGenericRepositories<Role> roleRepository;
-        public RoleController(IGenericRepositories<Role> roleRepository) {
+        private IRoleRepository roleRepository;
+
+        public RoleController(IRoleRepository roleRepository) 
+        {
             this.roleRepository = roleRepository;
         }
 
@@ -21,6 +22,10 @@ namespace ASPAPI.Controllers {
         public IActionResult AddRole(string name) {
             if (string.IsNullOrWhiteSpace(name))
                 return BadRequest("Заполните данные");
+
+            var searchedRole = roleRepository.GetByName(name);
+            if (searchedRole != null)
+                return BadRequest("Данная роль уже присутствует");
 
             var role = new Role {
                 Name = name
@@ -53,7 +58,6 @@ namespace ASPAPI.Controllers {
 
             roleRepository.Remove(roleToDelete);
             return Ok();
-
         }
     }
 }

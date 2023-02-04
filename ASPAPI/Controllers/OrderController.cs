@@ -1,25 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
 using ASPAPI.Services;
+using ASPAPI.Abstract.Repositories;
 
 namespace ASPAPI.Controllers
 {
-    public record OrderDto(string name, DateTime dtAndTime, int userid);
+    public record OrderDto(int id, string name, DateTime dtAndTime, int userid);
     [Route("[controller]/[action]")]
     [ApiController]
 
     public class OrderController : ControllerBase
     {
-        private TestDBContext dbContext;
-        public OrderController(TestDBContext dbContext)
+        private IGenericRepositories<Order> orderRepository;
+        public OrderController(IGenericRepositories<Order> orderRepository)
         {
-            this.dbContext = dbContext;
+            this.orderRepository = orderRepository;
         }
 
         [HttpGet]
         public IActionResult GetOrder()
         {
-            return Ok(dbContext.Orders?.ToList());
+            return Ok(orderRepository.GetAll());
         }
 
         [HttpPost]
@@ -31,23 +32,20 @@ namespace ASPAPI.Controllers
                 return BadRequest("Не передан ID пользователя");
 
             var order = new Order
-            { Name = data.name, Date = data.dtAndTime, UserId = data.userid, 
-                User = dbContext.Users.FirstOrDefault(u => u.Id == data.userid) };
-        //  Console.WriteLine(order);
-            dbContext.Orders.Add(order);
-            dbContext.SaveChanges();
+            { Name = data.name, Date = data.dtAndTime, UserId = data.userid,
+       //         User = userRepository.GetUser(data.userid)
+            };
+            orderRepository.Add(order);        
             return Ok();
         }
 
         [HttpDelete]
         public IActionResult DeleteOrder(int id)
         {
-            var OrderToDelete = dbContext.Orders.FirstOrDefault(o => o.Id == id);
-            if (OrderToDelete == null)
+            var orderToDelete = orderRepository.GetById(id);  
+            if (orderToDelete == null)
                 return NotFound("Такого заказа не существует");
-
-            dbContext.Orders.Remove(OrderToDelete);
-            dbContext.SaveChanges();
+            orderRepository.Remove(orderToDelete);
             return Ok();
         }
 
@@ -57,13 +55,15 @@ namespace ASPAPI.Controllers
             if (string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Заполните название / никнейм заказа");
 
-            var OrderToUpdate = dbContext.Orders.FirstOrDefault(o => o.Id == data.userid);
-            if (OrderToUpdate == null)
+            // var orderToUpdate = orderRepository.GetById(data.id); 
+            var orderToUpdate = orderRepository.GetById(data.id);
+
+            if (orderToUpdate == null)
                 return NotFound("Такого заказа не существует");
 
-          //  OrderToUpdate.Name = data.name;
-            dbContext.Orders.Update(OrderToUpdate);
-            dbContext.SaveChanges();
+            orderToUpdate.Name=data.name;
+
+            orderRepository.Update(orderToUpdate);
             return Ok();
         }
 

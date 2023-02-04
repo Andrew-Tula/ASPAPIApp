@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
 using ASPAPI.Services;
+using ASPAPI.Abstract.Repositories;
 
 namespace ASPAPI.Controllers
 {
@@ -11,57 +12,50 @@ namespace ASPAPI.Controllers
     [ApiController]
     public class OrderItemController : ControllerBase
     {
-        private const string DataIsEmpty = "Данные пусты";
-        private TestDBContext dbContext;
-
-        public OrderItemController(TestDBContext dbContext)
+        private IGenericRepositories<OrderItem> orderItemRepository;
+        public OrderItemController(IGenericRepositories<OrderItem> orderItemRepository)
         {
-            this.dbContext = dbContext;
+            this.orderItemRepository = orderItemRepository;
         }
 
         [HttpGet]
-        public IActionResult GetOrderItem() => Ok(dbContext.OrderItems?.ToList());
-        //{
-        //    return Ok(dbContext.OrderItems?.ToList());
-        //}
-
+        public IActionResult GetOrderItem() => Ok(orderItemRepository.GetAll());
+      
         [HttpPost]
         public IActionResult AddOrderItem(OrderItemDto data)
         {
             if (data is null)
-                return BadRequest(DataIsEmpty);
+                return BadRequest("Пустое поле данных");
 
             if (data.productCount <= 0)
                 return BadRequest("Количество товара не может быть нулевым или отрицательным");
 
-            var product = dbContext.Products.FirstOrDefault(p => p.Id == data.productid);
-            if (product is null)
-                return BadRequest("Продукт не существует");
+            //var product = orderItemRepository.GetProduct(data.productid);
+            //    if (product is null)
+            //    return BadRequest("Продукт не существует");
 
-            var order = dbContext.Orders.FirstOrDefault(o => o.Id == data.orderid);
-            if (order is null)
-                return BadRequest("Заказ не существует");
+            //var order = orderItemRepository.GetOrder(data.orderid);
+            //if (order is null)
+            //    return BadRequest("Заказ не существует");
 
-            var orderItem = new OrderItem
-            { 
-                ProductCount = data.productCount,
-                ProductId = data.productid,
-                OrderId = data.orderid,
-            };
-            dbContext.OrderItems.Add(orderItem);
-            dbContext.SaveChanges();
+            //var orderItem = new OrderItem
+            //{ 
+            //    ProductCount = data.productCount,
+            //    ProductId = data.productid,
+            //    OrderId = data.orderid,
+            //};
+
+            //orderItemRepository.Add(orderItem);
             return Ok();
         }
 
         [HttpDelete]
         public IActionResult DeleteOrderItem(int id)
         {
-            var orderItemToDelete = dbContext.OrderItems.FirstOrDefault(o => o.Id == id);
+            var orderItemToDelete = orderItemRepository.GetById(id);
             if (orderItemToDelete == null)
                 return NotFound("Нет такого продукта");
-
-            dbContext.OrderItems.Remove(orderItemToDelete);
-            dbContext.SaveChanges();
+            orderItemRepository.Remove(orderItemToDelete);
             return Ok();
         }
 
@@ -69,12 +63,13 @@ namespace ASPAPI.Controllers
         public IActionResult EditOrderItem(OrderItemChangeDto data)
         {
             if (data is null)
-                return BadRequest(DataIsEmpty);
+                return BadRequest("Не заполнены поля для изменения");
 
             if (data.productCount <= 0)
                 return BadRequest("Количество товара не может быть нулевым или отрицательным");
 
-            var originOrderItem = dbContext.OrderItems.FirstOrDefault(o => o.Id == data.orderItemId);
+            //var originOrderItem = dbContext.OrderItems.FirstOrDefault(o => o.Id == data.orderItemId);
+            var originOrderItem = orderItemRepository.GetById(data.orderItemId);
             if (originOrderItem is null)
                 return BadRequest("Элемент заказа не найден");
 
@@ -82,8 +77,7 @@ namespace ASPAPI.Controllers
                 return Ok();
 
             originOrderItem.ProductCount = data.productCount;
-            dbContext.OrderItems.Update(originOrderItem);
-            dbContext.SaveChanges();
+            orderItemRepository.Update(originOrderItem);
             return Ok();
         }
     }

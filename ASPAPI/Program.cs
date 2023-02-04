@@ -43,8 +43,13 @@ services.AddSwaggerGen();
 
 services.AddDbContext<TestDBContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("TestDBContext")));
 
-services.AddScoped<IGenericRepositories<Role>, GenericRepositories<Role>>();
+services.AddScoped<IGenericRepositories<Role>, GenericRepository<Role>>();
 services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IGenericRepositories<Product>, ProductRepository>();
+services.AddScoped<IRoleRepository, RoleRepository>();
+//  lneed to add .....
+
+
 //to read
 //AddSingleton AddScoped AddTransient
 var app = builder.Build();

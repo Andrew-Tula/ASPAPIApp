@@ -5,17 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ASPAPI.Repositories
 {
-    public class GenericRepositories<T> : IGenericRepositories<T> where T : class, IEntity {
+    public class GenericRepository<T> : IGenericRepositories<T> where T : class, IEntity {
         protected TestDBContext dbContext;
         protected DbSet<T> dbSet;
 
-        public GenericRepositories(TestDBContext dbContext) {
+        public GenericRepository(TestDBContext dbContext) {
             this.dbContext = dbContext;
             dbSet = dbContext.Set<T>();
         }
         public List<T>? GetAll() => dbSet?.ToList();
 
-        public T? GetById(int id) => dbSet.FirstOrDefault(d => d.Id == id);
+        public virtual T? GetById(int id) => dbSet.FirstOrDefault(d => d.Id == id);
 
         public void Add(T item) {
             dbSet.Add(item);
@@ -27,9 +27,13 @@ namespace ASPAPI.Repositories
             dbContext.SaveChanges();
         }
 
-        public void Remove(T item) {
+        public virtual void Remove(T item) {
             dbContext.Remove(item);
             dbContext.SaveChanges();
+        }
+
+        public void InitDbSet(DbSet<T> dbSet) {
+            this.dbSet = dbSet;
         }
     }
 }
