@@ -16,6 +16,8 @@ namespace ASPAPI.Repositories
         public List<T>? GetAll() => dbSet?.ToList();
 
         public virtual T? GetById(int id) => dbSet.FirstOrDefault(d => d.Id == id);
+        public virtual T? GetProduct(int id) => dbSet.FirstOrDefault(p => p.Id == id);
+        public virtual T? GetOrder(int id) => dbSet.FirstOrDefault(o => o.Id == id);
 
         public void Add(T item) {
             dbSet.Add(item);

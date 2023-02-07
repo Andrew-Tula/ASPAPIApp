@@ -30,22 +30,22 @@ namespace ASPAPI.Controllers
             if (data.productCount <= 0)
                 return BadRequest("Количество товара не может быть нулевым или отрицательным");
 
-            //var product = orderItemRepository.GetProduct(data.productid);
-            //    if (product is null)
-            //    return BadRequest("Продукт не существует");
+            var product = orderItemRepository.GetProduct(data.productid);
+            if (product is null)
+                return BadRequest("Продукт не существует");
 
-            //var order = orderItemRepository.GetOrder(data.orderid);
-            //if (order is null)
-            //    return BadRequest("Заказ не существует");
+            var order = orderItemRepository.GetOrder(data.orderid);
+            if (order is null)
+                return BadRequest("Заказ не существует");
 
-            //var orderItem = new OrderItem
-            //{ 
-            //    ProductCount = data.productCount,
-            //    ProductId = data.productid,
-            //    OrderId = data.orderid,
-            //};
+            var orderItem = new OrderItem
+            {
+                ProductCount = data.productCount,
+                ProductId = data.productid,
+                OrderId = data.orderid,
+            };
 
-            //orderItemRepository.Add(orderItem);
+            orderItemRepository.Add(orderItem);
             return Ok();
         }
 

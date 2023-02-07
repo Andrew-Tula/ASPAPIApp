@@ -9,5 +9,9 @@ namespace ASPAPI.Abstract.Repositories
         List<T>? GetAll();
         void Remove(T item);
         void Update(T item);
+        //  сомневаюсь - сюда ли добавлять ?
+        T? GetProduct(int id);    
+        T? GetOrder(int id);
+       
     }
 }
