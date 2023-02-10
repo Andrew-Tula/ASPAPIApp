@@ -43,18 +43,18 @@ services.AddSwaggerGen();
 
 services.AddDbContext<TestDBContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("TestDBContext")));
 
-services.AddScoped<IGenericRepositories<Role>, GenericRepository<Role>>();
-services.AddScoped<IGenericRepositories<Product>, ProductRepository>();
-services.AddScoped<IGenericRepositories<User>, UserRepository>();
-services.AddScoped<IGenericRepositories<Order>, OrderRepository>();
-services.AddScoped<IGenericRepositories<OrderItem>, OrderItemRepository>();
-services.AddScoped<IGenericRepositories<Store>, StoreRepository>();
+//services.AddScoped<IGenericRepositories<Role>, GenericRepository<Role>>();
+//services.AddScoped<IGenericRepositories<Product>, ProductRepository>();
+//services.AddScoped<IGenericRepositories<User>, UserRepository>();
+//services.AddScoped<IGenericRepositories<Order>, OrderRepository>();
+//services.AddScoped<IGenericRepositories<OrderItem>, OrderItemRepository>();
+//services.AddScoped<IGenericRepositories<Store>, StoreRepository>();
 
 
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IRoleRepository, RoleRepository>();
 services.AddScoped<IStoreRepository, StoreRepository>();
-//services.AddScoped<IProductRepository, ProductRepository>();
+services.AddScoped<IProductRepository, ProductRepository>();
 services.AddScoped<IOrderRepository, OrderRepository>();
 services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 

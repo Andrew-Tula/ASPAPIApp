@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ASPAPI.Repositories
 {
-    public class ProductRepository : GenericRepository<Product>, IGenericRepositories<Product> {
+    public class ProductRepository : GenericRepository<Product>, IProductRepository {
         public ProductRepository(TestDBContext dbContext) : base(dbContext) { }
 
         public override Product? GetById(int id)

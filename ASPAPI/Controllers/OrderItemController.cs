@@ -12,6 +12,7 @@ namespace ASPAPI.Controllers
     [ApiController]
     public class OrderItemController : ControllerBase
     {
+       // private orderItemRepository<Order> : IGenericRepositories;
         private IGenericRepositories<OrderItem> orderItemRepository;
         public OrderItemController(IGenericRepositories<OrderItem> orderItemRepository)
         {

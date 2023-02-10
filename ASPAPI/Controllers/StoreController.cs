@@ -9,8 +9,8 @@ namespace ASPAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public record ProductDto(int id, int storeCount);
-    public record ProductPostDto(int id, string name, int storeCount);
+    public record StoreProductDto(int id, int storeCount);
+    public record StoreProductPostDto(int id, string name, int storeCount);
     public class StoreController : ControllerBase
     {
         private IStoreRepository storeRepository;
@@ -21,7 +21,7 @@ namespace ASPAPI.Controllers
 
         [HttpDelete]
         // На самом деле в Сторе лежит внешний ключ на Продукт, поэтому операция "удаление" обнуляет количество 
-        public IActionResult DeleteProduct(ProductDto data)
+        public IActionResult DeleteProduct(StoreProductDto data)
         {
             var productToDelete = storeRepository.GetById(data.id);
             if (productToDelete == null)
@@ -35,7 +35,7 @@ namespace ASPAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult ChangeStoreCount(ProductDto data)
+        public IActionResult ChangeStoreCount(StoreProductDto data)
         {
             var countToUpdate = storeRepository.GetById(data.id);
             if (countToUpdate == null)
@@ -50,7 +50,7 @@ namespace ASPAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddStoreCountForProduct(ProductPostDto data)
+        public IActionResult AddStoreCountForProduct(StoreProductPostDto data)
         {
             if (string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Заполните название продукта");
