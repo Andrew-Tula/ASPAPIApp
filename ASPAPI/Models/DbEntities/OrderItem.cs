@@ -1,4 +1,5 @@
 ﻿using ASPAPI.Abstract.Models;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -10,12 +11,10 @@ namespace ASPAPI.Models.DbEntities
 
         public int ProductCount { get; set; }
 
-        [ForeignKey(nameof(ProductId))]
-        public int ProductId { get; set; }
+        [ForeignKey(nameof(StoreProductId))]
+        public int? StoreProductId { get; set; }
         [JsonIgnore]
-        public Product Product { get; set; }
-
-       
+        public StoreProduct StoreProduct { get; set; }
 
         [ForeignKey(nameof(OrderId))]
         public int OrderId { get; set; }

@@ -4,7 +4,7 @@ namespace ASPAPI.Abstract.Repositories
 {
     public interface IOrderItemRepository : IGenericRepositories<OrderItem>    
     {
-        Product? GetProduct(int id);
-        Order? GetOrder(int id);
+        new Product? GetProduct(int id);
+        new Order? GetOrder(int id);
     }
 }

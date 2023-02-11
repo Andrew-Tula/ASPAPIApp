@@ -1,66 +1,59 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using ASPAPI.Abstract.Repositories;
 using ASPAPI.Models.DbEntities;
-using ASPAPI.Services;
-using ASPAPI.Abstract.Repositories;
-using ASPAPI.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ASPAPI.Controllers
-{
-    [Route("api/[controller]")]
+namespace ASPAPI.Controllers {
+    public record StoreDto(string name, string address);
+
+    [Route("[controller]/[action]")]
     [ApiController]
-    public record StoreProductDto(int id, int storeCount);
-    public record StoreProductPostDto(int id, string name, int storeCount);
     public class StoreController : ControllerBase
     {
-        private IStoreRepository storeRepository;
-        public StoreController(IStoreRepository storeRepository) => this.storeRepository = storeRepository;
+        private readonly IGenericRepositories<Store> storeRepository;
+
+        public StoreController(IGenericRepositories<Store> storeRepository) => this.storeRepository = storeRepository;
 
         [HttpGet]
         public IActionResult GetStores() => Ok(storeRepository.GetAll());
 
-        [HttpDelete]
-        // На самом деле в Сторе лежит внешний ключ на Продукт, поэтому операция "удаление" обнуляет количество 
-        public IActionResult DeleteProduct(StoreProductDto data)
-        {
-            var productToDelete = storeRepository.GetById(data.id);
-            if (productToDelete == null)
-                return NotFound("Такого подукта не существует");
-            productToDelete.StoreCount = 0;
-    //  ???  верно ли такое действие (обнуление остатков) и верен ли синтаксис ? 
+        [HttpPost]
+        public IActionResult AddStore(StoreDto data) {
+            if (data is null)
+                return BadRequest("Данные пусты");
 
-            storeRepository.Update(productToDelete);
-            
-             return Ok();
-        }
+            if (string.IsNullOrWhiteSpace(data.name))
+                return BadRequest("Укажите название");
 
-        [HttpPut]
-        public IActionResult ChangeStoreCount(StoreProductDto data)
-        {
-            var countToUpdate = storeRepository.GetById(data.id);
-            if (countToUpdate == null)
-                return NotFound("Такого подукта не существует");
-            if (data.storeCount <= 0) 
-                return BadRequest("Количество единиц товара не может быть нулевым или отрицательным");
-            
-            countToUpdate.StoreCount = data.storeCount;
-           
-            storeRepository.Update(countToUpdate);
+            if (string.IsNullOrWhiteSpace(data.address))
+                return BadRequest("Укажите адрес");
+
+            var store = new Store {
+                Name = data.name,
+                Address = data.address
+            };
+            storeRepository.Add(store);
             return Ok();
         }
 
-        [HttpPost]
-        public IActionResult AddStoreCountForProduct(StoreProductPostDto data)
-        {
-            if (string.IsNullOrWhiteSpace(data.name))
-                return BadRequest("Заполните название продукта");
-            if (data.storeCount == 0 || data.storeCount == ' ')
-                return BadRequest("Заполните количество продукта");
+        [HttpDelete]
+        public IActionResult DeleteStore(int id) {
+            var store = storeRepository.GetById(id);
+            if (store is null)
+                return BadRequest("Магазин не найден");
 
-            var storeProduct = new Store
-            { StoreCount = data.storeCount };
+            storeRepository.Remove(store);
+            return Ok();
+        }
 
-            storeRepository.Add(storeProduct);
+        [HttpPut]
+        public IActionResult EditStore(Store store) {
+            var originStore = storeRepository.GetById(store.Id);
+            if (originStore is null)
+                return BadRequest("Магазин не найден");
+
+            originStore.Name = store.Name;
+            originStore.Address = store.Address;
+            storeRepository.Update(originStore);
             return Ok();
         }
     }

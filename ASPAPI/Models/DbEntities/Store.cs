@@ -1,23 +1,15 @@
 ﻿using ASPAPI.Abstract.Models;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace ASPAPI.Models.DbEntities
-{
+namespace ASPAPI.Models.DbEntities {
     public class Store : IEntity {
 #nullable disable
         public int Id { get; set; }
-        public int StoreCount { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
 
-        [ForeignKey(nameof(Productid))]  
-        public int Productid { get; set; }
         [JsonIgnore]
-        public Product Product { get; set; }
-
-        [ForeignKey(nameof(OrderItem))]
-        public int Orderitemid { get; set; }
-        [JsonIgnore]
-        public OrderItem OrderItem { get; set; }
+        public List<StoreProduct> StoreProducts { get; set; }
 #nullable restore
     }
     

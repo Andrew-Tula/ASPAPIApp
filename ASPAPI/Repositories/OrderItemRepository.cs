@@ -8,7 +8,7 @@ namespace ASPAPI.Repositories
     {
         public OrderItemRepository(TestDBContext dbContext) : base(dbContext) { }
 
-        public Product? GetProduct(int id) => dbContext.Products.FirstOrDefault(p => p.Id == id);
-        public Order? GetOrder(int id) => dbContext.Orders.FirstOrDefault(o => o.Id == id);
+        public new Product? GetProduct(int id) => dbContext.Products.FirstOrDefault(p => p.Id == id);
+        public new Order? GetOrder(int id) => dbContext.Orders.FirstOrDefault(o => o.Id == id);
     }
 }

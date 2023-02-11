@@ -3,6 +3,7 @@ using System;
 using ASPAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ASPAPI.Migrations
 {
     [DbContext(typeof(TestDBContext))]
-    partial class TestDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230211091959_StoreAdd")]
+    partial class StoreAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,14 +63,14 @@ namespace ASPAPI.Migrations
                     b.Property<int>("ProductCount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("StoreProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("StoreProductId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
                 });
@@ -115,41 +118,22 @@ namespace ASPAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Stores");
-                });
-
-            modelBuilder.Entity("ASPAPI.Models.DbEntities.StoreProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("Orderitemid")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Productid")
                         .HasColumnType("integer");
 
                     b.Property<int>("StoreCount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("Orderitemid");
 
-                    b.HasIndex("StoreId");
+                    b.HasIndex("Productid");
 
-                    b.ToTable("StoreProducts");
+                    b.ToTable("Stores");
                 });
 
             modelBuilder.Entity("ASPAPI.Models.DbEntities.User", b =>
@@ -192,32 +176,34 @@ namespace ASPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ASPAPI.Models.DbEntities.StoreProduct", "StoreProduct")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("StoreProductId");
-
-                    b.Navigation("Order");
-
-                    b.Navigation("StoreProduct");
-                });
-
-            modelBuilder.Entity("ASPAPI.Models.DbEntities.StoreProduct", b =>
-                {
                     b.HasOne("ASPAPI.Models.DbEntities.Product", "Product")
-                        .WithMany("StoreProducts")
+                        .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ASPAPI.Models.DbEntities.Store", "Store")
-                        .WithMany("StoreProducts")
-                        .HasForeignKey("StoreId")
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ASPAPI.Models.DbEntities.Store", b =>
+                {
+                    b.HasOne("ASPAPI.Models.DbEntities.OrderItem", "OrderItem")
+                        .WithMany()
+                        .HasForeignKey("Orderitemid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.HasOne("ASPAPI.Models.DbEntities.Product", "Product")
+                        .WithMany("Stores")
+                        .HasForeignKey("Productid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Store");
+                    b.Navigation("OrderItem");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ASPAPI.Models.DbEntities.User", b =>
@@ -238,22 +224,14 @@ namespace ASPAPI.Migrations
 
             modelBuilder.Entity("ASPAPI.Models.DbEntities.Product", b =>
                 {
-                    b.Navigation("StoreProducts");
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("Stores");
                 });
 
             modelBuilder.Entity("ASPAPI.Models.DbEntities.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("ASPAPI.Models.DbEntities.Store", b =>
-                {
-                    b.Navigation("StoreProducts");
-                });
-
-            modelBuilder.Entity("ASPAPI.Models.DbEntities.StoreProduct", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("ASPAPI.Models.DbEntities.User", b =>

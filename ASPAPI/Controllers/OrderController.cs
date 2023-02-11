@@ -11,8 +11,8 @@ namespace ASPAPI.Controllers
 
     public class OrderController : ControllerBase
     {
-        private IGenericRepositories<Order> orderRepository;
-        public OrderController(IGenericRepositories<Order> orderRepository)
+        private IOrderRepository orderRepository;
+        public OrderController(IOrderRepository orderRepository)
         {
             this.orderRepository = orderRepository;
         }

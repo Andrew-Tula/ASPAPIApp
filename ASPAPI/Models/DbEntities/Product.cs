@@ -9,10 +9,7 @@ namespace ASPAPI.Models.DbEntities {
         public decimal Price { get; set; }
 
         [JsonIgnore]
-        public List<OrderItem> OrderItems { get; set; }
-
-        [JsonIgnore]
-        public List<Store> Stores { get; set; }
+        public List<StoreProduct> StoreProducts { get; set; }
 #nullable restore
     }
 }

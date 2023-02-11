@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
-using ASPAPI.Services;
 using ASPAPI.Abstract.Repositories;
 
-namespace ASPAPI.Controllers
-{
-    public record OrderItemDto(int productCount, int productid, int orderid);
+namespace ASPAPI.Controllers {
+    public record OrderItemDto(int productCount, int storeProductId, int orderid);
     public record OrderItemChangeDto(int orderItemId, int productCount);
 
     [Route("[controller]/[action]")]
     [ApiController]
     public class OrderItemController : ControllerBase
     {
-       // private orderItemRepository<Order> : IGenericRepositories;
-        private IGenericRepositories<OrderItem> orderItemRepository;
-        public OrderItemController(IGenericRepositories<OrderItem> orderItemRepository)
+        private IOrderItemRepository orderItemRepository;
+        private IGenericRepositories<StoreProduct> storeProductRepository;
+
+        public OrderItemController(IOrderItemRepository orderItemRepository, IGenericRepositories<StoreProduct> productRepository)
         {
             this.orderItemRepository = orderItemRepository;
+            this.storeProductRepository = productRepository;
         }
 
         [HttpGet]
@@ -31,9 +31,12 @@ namespace ASPAPI.Controllers
             if (data.productCount <= 0)
                 return BadRequest("Количество товара не может быть нулевым или отрицательным");
 
-            var product = orderItemRepository.GetProduct(data.productid);
-            if (product is null)
+            var storeProduct = storeProductRepository.GetById(data.storeProductId);
+            if (storeProduct is null)
                 return BadRequest("Продукт не существует");
+
+            if (storeProduct.StoreCount < data.productCount)
+                return BadRequest("Нет достаточного количества продукта в магазине");
 
             var order = orderItemRepository.GetOrder(data.orderid);
             if (order is null)
@@ -42,11 +45,14 @@ namespace ASPAPI.Controllers
             var orderItem = new OrderItem
             {
                 ProductCount = data.productCount,
-                ProductId = data.productid,
+                StoreProductId = data.storeProductId,
                 OrderId = data.orderid,
             };
 
             orderItemRepository.Add(orderItem);
+
+            storeProduct.StoreCount -= data.productCount;
+            storeProductRepository.Update(storeProduct);
             return Ok();
         }
 

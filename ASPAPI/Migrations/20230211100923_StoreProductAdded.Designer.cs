@@ -3,6 +3,7 @@ using System;
 using ASPAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ASPAPI.Migrations
 {
     [DbContext(typeof(TestDBContext))]
-    partial class TestDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230211100923_StoreProductAdded")]
+    partial class StoreProductAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,14 +63,9 @@ namespace ASPAPI.Migrations
                     b.Property<int>("ProductCount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("StoreProductId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("StoreProductId");
 
                     b.ToTable("OrderItems");
                 });
@@ -192,13 +190,7 @@ namespace ASPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ASPAPI.Models.DbEntities.StoreProduct", "StoreProduct")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("StoreProductId");
-
                     b.Navigation("Order");
-
-                    b.Navigation("StoreProduct");
                 });
 
             modelBuilder.Entity("ASPAPI.Models.DbEntities.StoreProduct", b =>
@@ -249,11 +241,6 @@ namespace ASPAPI.Migrations
             modelBuilder.Entity("ASPAPI.Models.DbEntities.Store", b =>
                 {
                     b.Navigation("StoreProducts");
-                });
-
-            modelBuilder.Entity("ASPAPI.Models.DbEntities.StoreProduct", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("ASPAPI.Models.DbEntities.User", b =>
