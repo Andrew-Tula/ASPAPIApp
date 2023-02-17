@@ -4,8 +4,8 @@ namespace ASPAPI.Abstract.Repositories
 {
     public interface IProductRepository : IGenericRepositories<Product>
     {
-        Product? GetProduct(int id);
+        new Product? GetProduct(int id);
 
-       // Product? Remove(Product item); 
+        new Product? Remove(Product item); 
     }
 }

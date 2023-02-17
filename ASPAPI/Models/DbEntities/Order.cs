@@ -1,4 +1,5 @@
 ﻿using ASPAPI.Abstract.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -14,6 +15,12 @@ namespace ASPAPI.Models.DbEntities
         public int UserId { get; set; }
         [JsonIgnore]
         public User User { get; set; }
+        
+        [ForeignKey(nameof(ProductId))]
+        public int ProductId { get; set; }
+        [JsonIgnore]
+        public Product Product { get; set; }
+
 
         [JsonIgnore]
         public List<OrderItem> OrderItems { get; set; }
