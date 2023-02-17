@@ -7,6 +7,8 @@ namespace ASPAPI.Models.DbEntities {
 #nullable disable
         public int Id { get; set; }
 
+        public int StoreCount { get; set; }
+
         [ForeignKey(nameof(StoreId))]
         public int StoreId { get; set; }
         [JsonIgnore]
@@ -23,7 +25,7 @@ namespace ASPAPI.Models.DbEntities {
         public OrderItem OrderItem { get; set; }
 
 
-        public int StoreCount { get; set; }
+       
 
         [JsonIgnore]
         public List<OrderItem> OrderItems { get; set; }
