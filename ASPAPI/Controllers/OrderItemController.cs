@@ -11,9 +11,9 @@ namespace ASPAPI.Controllers {
     public class OrderItemController : ControllerBase
     {
         private IOrderItemRepository orderItemRepository;
-        private IGenericRepositories<StoreProduct> storeProductRepository;
+        private IStoreProductRepository storeProductRepository;
 
-        public OrderItemController(IOrderItemRepository orderItemRepository, IGenericRepositories<StoreProduct> productRepository)
+        public OrderItemController(IOrderItemRepository orderItemRepository, IStoreProductRepository productRepository)
         {
             this.orderItemRepository = orderItemRepository;
             this.storeProductRepository = productRepository;

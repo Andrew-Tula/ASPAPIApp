@@ -2,7 +2,7 @@
 
 namespace ASPAPI.Abstract.Repositories
 {
-    public interface IProductRepository : IGenericRepositories<Product>
+    public interface IProductRepository : IGenericRepository<Product>
     {
         new Product? GetProduct(int id);
 

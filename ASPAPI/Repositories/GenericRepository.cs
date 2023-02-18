@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ASPAPI.Repositories
 {
-    public class GenericRepository<T> : IGenericRepositories<T> where T : class, IEntity {
+    public class GenericRepository<T> : IGenericRepository<T> where T : class, IEntity {
         protected TestDBContext dbContext;
         protected DbSet<T> dbSet;
 

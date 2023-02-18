@@ -9,9 +9,9 @@ namespace ASPAPI.Controllers {
     [ApiController]
     public class StoreController : ControllerBase
     {
-        private readonly IGenericRepositories<Store> storeRepository;
+        private readonly IGenericRepository<Store> storeRepository;
 
-        public StoreController(IGenericRepositories<Store> storeRepository) => this.storeRepository = storeRepository;
+        public StoreController(IGenericRepository<Store> storeRepository) => this.storeRepository = storeRepository;
 
         [HttpGet]
         public IActionResult GetStores() => Ok(storeRepository.GetAll());

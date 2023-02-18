@@ -2,7 +2,7 @@
 
 namespace ASPAPI.Abstract.Repositories
 {
-    public interface IRoleRepository: IGenericRepositories<Role>
+    public interface IRoleRepository: IGenericRepository<Role>
     {
         Role? GetByName(string name);
     }

@@ -2,7 +2,7 @@
 
 namespace ASPAPI.Abstract.Repositories
 {
-    public interface IStoreRepository : IGenericRepositories<Store>
+    public interface IStoreRepository : IGenericRepository<Store>
     {
        new Store? GetById(int id);
     }

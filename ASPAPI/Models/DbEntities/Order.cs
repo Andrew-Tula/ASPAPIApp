@@ -15,12 +15,6 @@ namespace ASPAPI.Models.DbEntities
         public int UserId { get; set; }
         [JsonIgnore]
         public User User { get; set; }
-        
-        [ForeignKey(nameof(ProductId))]
-        public int ProductId { get; set; }
-        [JsonIgnore]
-        public Product Product { get; set; }
-
 
         [JsonIgnore]
         public List<OrderItem> OrderItems { get; set; }

@@ -43,13 +43,9 @@ services.AddSwaggerGen();
 
 services.AddDbContext<TestDBContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("TestDBContext")));
 
-//services.AddScoped<IGenericRepositories<Role>, GenericRepository<Role>>();
-services.AddScoped<IGenericRepositories<Product>, ProductRepository>();
-services.AddScoped<IGenericRepositories<Store>, GenericRepository<Store>>();
-//services.AddScoped<IGenericRepositories<User>, GenericRepository<User>>();
-//services.AddScoped<IGenericRepositories<Order>, OrderRepository>();
-//services.AddScoped<IGenericRepositories<OrderItem>, OrderItemRepository>();
-//services.AddScoped<IGenericRepositories<Store>, StoreRepository>();
+services.AddScoped<IStoreProductRepository, StoreProductRepository>();
+services.AddScoped<IGenericRepository<Product>, ProductRepository>();
+services.AddScoped<IGenericRepository<Store>, GenericRepository<Store>>();
 
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IRoleRepository, RoleRepository>();

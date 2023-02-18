@@ -18,22 +18,10 @@ namespace ASPAPI.Models.DbEntities {
         public int ProductId { get; set; }
         [JsonIgnore]
         public Product Product { get; set; }
-
-        [ForeignKey(nameof(OrderItemId))]
-        public int OrderItemId { get; set; } = 0;
-        [JsonIgnore]
-        public OrderItem OrderItem { get; set; }
-
-
        
 
         [JsonIgnore]
         public List<OrderItem> OrderItems { get; set; }
-        [JsonIgnore]
-        public List<Product> Products { get; set; }
-        [JsonIgnore]
-        public List<Store> Stores { get; set; } 
-
 #nullable restore
     }
 }

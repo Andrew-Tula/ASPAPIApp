@@ -21,8 +21,8 @@ namespace ASPAPI.Controllers {
 
     public class ProductController : ControllerBase
     {
-        private IGenericRepositories<Product> productRepository;
-        public ProductController(IGenericRepositories<Product> productRepository)
+        private IGenericRepository<Product> productRepository;
+        public ProductController(IGenericRepository<Product> productRepository)
         {
             this.productRepository = productRepository;
         }

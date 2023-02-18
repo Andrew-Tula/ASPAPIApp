@@ -2,7 +2,7 @@
 
 namespace ASPAPI.Abstract.Repositories
 {
-    public interface IGenericRepositories<T> where T : class, IEntity
+    public interface IGenericRepository<T> where T : class, IEntity
     {
         void Add(T item);
         T? GetById(int id);

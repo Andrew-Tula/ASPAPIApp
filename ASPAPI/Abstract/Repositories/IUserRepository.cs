@@ -2,7 +2,7 @@
 
 namespace ASPAPI.Abstract.Repositories
 {
-    public interface IUserRepository: IGenericRepositories<User> {
+    public interface IUserRepository: IGenericRepository<User> {
         Role? GetRole(int id);
     }
 }

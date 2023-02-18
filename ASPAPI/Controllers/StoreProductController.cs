@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
 using ASPAPI.Abstract.Repositories;
-using ASPAPI.Repositories;
 
-namespace ASPAPI.Controllers 
-{
+namespace ASPAPI.Controllers {
     public record StoreProductDTO (int StoreId, int ProductId, int StoreCount);
     [Route("[controller]/[action]")]
     [ApiController]
@@ -13,12 +11,12 @@ namespace ASPAPI.Controllers
         private IStoreProductRepository storeProductRepository;
        // private IGenericRepositories<StoreProduct> storeProductRepository;
 
-        private IOrderItemRepository orderItemRepository;
+        //private IOrderItemRepository orderItemRepository;
        // private IGenericRepositories<OrderItem> orderItemRepository;
 
-        private IProductRepository productRepository;
+        //private IProductRepository productRepository;
 
-        private IStoreRepository storeRepository;
+        //private IStoreRepository storeRepository;
 
         public StoreProductController(IStoreProductRepository storeProductRepository) //
             //  GenericRepositories<StoreProduct> productRepository)
