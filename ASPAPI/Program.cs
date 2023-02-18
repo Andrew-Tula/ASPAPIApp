@@ -49,10 +49,10 @@ services.AddScoped<IGenericRepository<Store>, GenericRepository<Store>>();
 
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IRoleRepository, RoleRepository>();
-//services.AddScoped<IProductRepository, ProductRepository>();
 services.AddScoped<IOrderRepository, OrderRepository>();
 services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 //to read
 //AddSingleton AddScoped AddTransient
 var app = builder.Build();

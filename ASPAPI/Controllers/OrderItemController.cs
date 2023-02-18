@@ -13,10 +13,10 @@ namespace ASPAPI.Controllers {
         private IOrderItemRepository orderItemRepository;
         private IStoreProductRepository storeProductRepository;
 
-        public OrderItemController(IOrderItemRepository orderItemRepository, IStoreProductRepository productRepository)
+        public OrderItemController(IOrderItemRepository orderItemRepository, IStoreProductRepository storeProductRepository)
         {
             this.orderItemRepository = orderItemRepository;
-            this.storeProductRepository = productRepository;
+            this.storeProductRepository = storeProductRepository;
         }
 
         [HttpGet]

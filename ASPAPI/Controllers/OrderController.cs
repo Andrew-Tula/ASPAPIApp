@@ -5,16 +5,21 @@ using ASPAPI.Abstract.Repositories;
 
 namespace ASPAPI.Controllers
 {
-    public record OrderDto(int id, string name, DateTime dtAndTime, int userid);
+    public record OrderDto(int id, string name);
+    public record OrderBaseDto(string name, int userid);
+
     [Route("[controller]/[action]")]
     [ApiController]
 
     public class OrderController : ControllerBase
     {
-        private IOrderRepository orderRepository;
-        public OrderController(IOrderRepository orderRepository)
+        private readonly IOrderRepository orderRepository;
+        private readonly IUserRepository userRepository;
+
+        public OrderController(IOrderRepository orderRepository, IUserRepository userRepository)
         {
             this.orderRepository = orderRepository;
+            this.userRepository = userRepository;
         }
 
         [HttpGet]
@@ -24,16 +29,20 @@ namespace ASPAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddOrder(OrderDto data)
+        public IActionResult AddOrder(OrderBaseDto data)
         {
             if (string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Заполните название / никнейм заказа");
-            if (data.userid == 0 || data.userid == ' ')
-                return BadRequest("Не передан ID пользователя");
+
+            var user = userRepository.GetById(data.userid);
+            if (user is null)
+                return BadRequest("Пользовательне найден");
 
             var order = new Order
-            { Name = data.name, Date = data.dtAndTime, UserId = data.userid,
-       //         User = userRepository.GetUser(data.userid)
+            { 
+                Name = data.name, 
+                Date = DateTime.Now, 
+                UserId = data.userid,
             };
             orderRepository.Add(order);        
             return Ok();
@@ -45,6 +54,7 @@ namespace ASPAPI.Controllers
             var orderToDelete = orderRepository.GetById(id);  
             if (orderToDelete == null)
                 return NotFound("Такого заказа не существует");
+
             orderRepository.Remove(orderToDelete);
             return Ok();
         }
@@ -55,24 +65,13 @@ namespace ASPAPI.Controllers
             if (string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Заполните название / никнейм заказа");
 
-            // var orderToUpdate = orderRepository.GetById(data.id); 
             var orderToUpdate = orderRepository.GetById(data.id);
-
             if (orderToUpdate == null)
                 return NotFound("Такого заказа не существует");
 
             orderToUpdate.Name=data.name;
-
             orderRepository.Update(orderToUpdate);
             return Ok();
         }
-
-
-
-
-
     }
-
-
-
 }

@@ -13,7 +13,7 @@ namespace ASPAPI.Repositories
             this.dbContext = dbContext;
             dbSet = dbContext.Set<T>();
         }
-        public List<T>? GetAll() => dbSet?.ToList();
+        public List<T>? GetAll() => dbSet?.OrderBy(i => i.Id).ToList();
 
         public virtual T? GetById(int id) => dbSet.FirstOrDefault(d => d.Id == id);
         public virtual T? GetProduct(int id) => dbSet.FirstOrDefault(p => p.Id == id);

@@ -14,14 +14,17 @@ namespace ASPAPI.Controllers {
         //private IOrderItemRepository orderItemRepository;
        // private IGenericRepositories<OrderItem> orderItemRepository;
 
-        //private IProductRepository productRepository;
+        private IGenericRepository<Product> productRepository;
+        private IGenericRepository<Store> storeRepository;
 
-        //private IStoreRepository storeRepository;
-
-        public StoreProductController(IStoreProductRepository storeProductRepository) //
-            //  GenericRepositories<StoreProduct> productRepository)
+        public StoreProductController(
+            IStoreProductRepository storeProductRepository,
+            IGenericRepository<Store> storeRepository,
+            IGenericRepository<Product> productRepository)
         {
             this.storeProductRepository = storeProductRepository;
+            this.storeRepository = storeRepository;
+            this.productRepository = productRepository;
         }
 
         [HttpGet]
@@ -33,12 +36,15 @@ namespace ASPAPI.Controllers {
         [HttpPost]
         public IActionResult AddStoreProduct(StoreProductDTO data)
         {
-            // есть ли метод, проверящий корректность ввода ЧИСЛА? (TryParse?)
-            if (data.StoreId == ' ' || data.StoreId < '0' || data.StoreId > '9')
-                return BadRequest("Заполните номер (ID) магазина");
-            if (data.ProductId == ' ' || data.ProductId < '0')
-                return BadRequest("Заполните ID продукта");
-            if (data.StoreCount == ' ' || data.StoreCount == 0)
+            var store = storeRepository.GetById(data.StoreId);
+            if (store is null)
+                return BadRequest("Нет магазина");
+
+            var product = productRepository.GetById(data.ProductId);
+            if (product is null)
+                return BadRequest("Нет продукта");
+
+            if (data.StoreCount == 0)
                 return BadRequest("Заполните количество товара / продукта");
 
             var storeProduct = new StoreProduct
@@ -46,7 +52,6 @@ namespace ASPAPI.Controllers {
                 StoreCount = data.StoreCount,
                 StoreId = data.StoreId,
                 ProductId = data.ProductId,
-                //         User = userRepository.GetUser(data.userid)
             };
             storeProductRepository.Add(storeProduct);
             return Ok();
@@ -64,27 +69,28 @@ namespace ASPAPI.Controllers {
         [HttpPut]
         public IActionResult EditStoreProduct(StoreProductDTO data)
         {
-            if (data.StoreId == ' ' || data.StoreId < '0' || data.StoreId > '9')
-                return BadRequest("Заполните номер (ID) магазина");
-            if (data.ProductId == ' ' || data.ProductId < '0')
-                return BadRequest("Заполните ID продукта");
-            if (data.StoreCount == ' ' || data.StoreCount <= 0)
+            var store = storeRepository.GetById(data.StoreId);
+            if (store is null)
+                return BadRequest("Нет магазина");
+
+            var product = productRepository.GetById(data.ProductId);
+            if (product is null)
+                return BadRequest("Нет продукта");
+
+            if (data.StoreCount <= 0)
                 return BadRequest("Заполните количество товара / продукта");
 
-            var originStoreProduct = storeProductRepository.GetById(data.StoreCount);
+            var originStoreProduct = storeProductRepository.GetById(data.ProductId);
             if (originStoreProduct is null)
                 return BadRequest("Элемент заказа не найден");
+
             if (data.StoreCount == originStoreProduct.StoreCount)
                 return Ok();
 
-            var storeProduct = new StoreProduct
-            {
-                StoreCount = data.StoreCount,
-                StoreId = data.StoreId,
-                ProductId = data.ProductId,
-                //         User = userRepository.GetUser(data.userid)
-            };
-            storeProductRepository.Update(storeProduct);
+            originStoreProduct.StoreCount = data.StoreCount;
+            originStoreProduct.StoreId = data.StoreId;
+            originStoreProduct.ProductId = data.ProductId;
+            storeProductRepository.Update(originStoreProduct);
             return Ok();
         }
     }
