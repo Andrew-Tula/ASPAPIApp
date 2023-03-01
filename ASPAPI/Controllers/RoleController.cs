@@ -34,7 +34,7 @@ namespace ASPAPI.Controllers {
             return Ok();
         }
 
-        [HttpPut] // написать метод change
+        [HttpPut] 
         public IActionResult EditRole(RoleDto role)
         {
             if (string.IsNullOrWhiteSpace(role?.name))

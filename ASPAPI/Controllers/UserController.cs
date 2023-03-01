@@ -27,7 +27,8 @@ namespace ASPAPI.Controllers {
 
             var user = new User { 
                 Name = data.name,
-                RoleId = role.Id,
+              //  RoleId = role.Id,
+                RoleId = data.roleId
             };
             userRepository.Add(user);
             return Ok();

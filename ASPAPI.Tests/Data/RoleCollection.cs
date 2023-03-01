@@ -9,6 +9,7 @@ public class RoleCollection {
         Roles = new List<Role> {
             new Role{ Id = 1, Name = "админ" },
             new Role{ Id = 2, Name = "пользователь" },
+            new Role{ Id = 3, Name = "продавец" },
         }.AsQueryable();
     }
 }

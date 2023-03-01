@@ -58,7 +58,7 @@ namespace ASPAPI.Tests.ControllerTests
 
         [DataTestMethod]
         [DataRow("старший продавец")]
-        [DataRow("продавец")]
+        [DataRow("кассир")]
         public void AddRoleSucces(string role) {
             var result = controller.AddRole(role);
             Assert.IsTrue(result is OkResult);
@@ -72,9 +72,9 @@ namespace ASPAPI.Tests.ControllerTests
             var values = (result as OkObjectResult)?.Value as List<Role>;
 
             Assert.IsNotNull(values);
-            Assert.IsTrue(values.Count == 2);
+            Assert.IsTrue(values.Count == 3);
             Assert.AreEqual(values[0].Name, roles.First().Name);
-            Assert.AreEqual(values[1].Name, roles.Last().Name);
+            Assert.AreEqual(values[2].Name, roles.Last().Name);
         }
 
         [DataTestMethod]
