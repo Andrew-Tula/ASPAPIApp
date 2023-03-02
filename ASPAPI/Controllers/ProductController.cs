@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ASPAPI.Models.DbEntities;
 using ASPAPI.Abstract.Repositories;
+using System;
 
 namespace ASPAPI.Controllers {
     public record ProductDto(int id, string name, decimal price): ProductBaseDto(name, price);
