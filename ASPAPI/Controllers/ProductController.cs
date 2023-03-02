@@ -9,14 +9,7 @@ namespace ASPAPI.Controllers {
     [Route("[controller]/[action]")]
     [ApiController]
 
-    //public class ProductController : ControllerBase
-    //{
-    //    private TestDBContext dbContext;
-    //    public ProductController(TestDBContext dbContext)
-    //    {
-    //        this.dbContext = dbContext;
-    //    }
-
+  
     public class ProductController : ControllerBase
     {
         private IGenericRepository<Product> productRepository;
