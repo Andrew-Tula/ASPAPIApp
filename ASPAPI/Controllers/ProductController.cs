@@ -4,7 +4,7 @@ using ASPAPI.Abstract.Repositories;
 using System;
 
 namespace ASPAPI.Controllers {
-    public record ProductDto(int id, string name, decimal price): ProductBaseDto(name, price);
+    public record ProductDto(int id, string name, decimal price);//: ProductBaseDto(name, price);
     public record ProductBaseDto(string name, decimal price);
 
     [Route("[controller]/[action]")]
