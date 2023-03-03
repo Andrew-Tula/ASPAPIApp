@@ -18,14 +18,15 @@ namespace ASPAPI.Controllers {
 
         [HttpPost]
         public IActionResult AddStore(StoreDto data) {
-            if (data is null)
-                return BadRequest("Данные пусты");
-
+          
             if (string.IsNullOrWhiteSpace(data.name))
                 return BadRequest("Укажите название");
 
             if (string.IsNullOrWhiteSpace(data.address))
                 return BadRequest("Укажите адрес");
+
+            if (data is null)
+                return BadRequest("Данные пусты");
 
             var store = new Store {
                 Name = data.name,
