@@ -7,12 +7,9 @@ using ASPAPI.Tests.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Data;
 
-namespace ASPAPI.Tests.ControllerTests
-{
+namespace ASPAPI.Tests.ControllerTests {
     [TestClass]
     public class ProductControllerTests
     {
@@ -26,8 +23,13 @@ namespace ASPAPI.Tests.ControllerTests
             var productDbSet = new Mock<DbSet<Product>>();
             TestHelper.InitDbSet(productDbSet, products);
 
+            var storeProducts = new StoreProductCollection().StoreProducts;
+            var storeProductDbSet = new Mock<DbSet<StoreProduct>>();
+            TestHelper.InitDbSet(storeProductDbSet, storeProducts);
+
             var context = new Mock<TestDBContext>();
             context.Setup(x => x.Products).Returns(productDbSet.Object);
+            context.Setup(x => x.StoreProducts).Returns(storeProductDbSet.Object);
 
             return context.Object;
         }
@@ -59,13 +61,13 @@ namespace ASPAPI.Tests.ControllerTests
         [TestMethod]
         public void AddProductEmptyPriceCheck() => AddProductBadRequestObjectResultCheck("Chupa", 0, "Заполните цену продукта");
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow("Bently", 100.25)]
         [DataRow("Mazeratti", 200.35)]
-        public void AddProductSucces(string name, decimal price)
+        [TestMethod]
+        public void AddProductSucces(string name, double price)
         {
-            var productBaseDto = new ProductBaseDto(name, price);
+            var productBaseDto = new ProductBaseDto(name, (decimal)price);
             var result = controller.AddProduct(productBaseDto);
             Assert.IsTrue(result is OkResult);
         }
@@ -84,7 +86,6 @@ namespace ASPAPI.Tests.ControllerTests
             Assert.AreEqual(values[3].Name, products.Last().Name);
         }
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow(10)]
         [DataRow(20)]
@@ -100,7 +101,6 @@ namespace ASPAPI.Tests.ControllerTests
             Assert.AreEqual("Такого подукта не существует", value);
         }
 
-        [TestMethod]
         [DataTestMethod]
        // [DataRow(1)]
         [DataRow(2)]
@@ -111,46 +111,42 @@ namespace ASPAPI.Tests.ControllerTests
         }
 
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow(-1, "Milk", 15)]
         [DataRow(0, "Milky", 25)]
-        public void EditProductNotSet(int id, string name, decimal price)
-        {
-            var productDto = new ProductDto(id, name, price);
+        public void EditProductNotSet(int id, string name, double price) {
+            var productDto = new ProductDto(id, name, (decimal)price);
 
-            var result = controller.EditProduct(productDto);
-
-            Assert.IsTrue(result is BadRequestObjectResult);
-            var value = (result as BadRequestObjectResult)?.Value as string;
-
-           // Assert.IsNotNull(value);
-           // Assert.AreEqual("Такого продукта не существует", value);
-        }
-
-        [TestMethod]
-        [DataTestMethod]
-        [DataRow(1, "Milk", 0)]
-        //[DataRow(55, "test")]
-        //[DataRow(666, "second")]
-        public void EditProductWrongPrice(int id, string name, decimal price)
-        {
-            var productDto = new ProductDto(id, name, price);
             var result = controller.EditProduct(productDto);
 
             Assert.IsTrue(result is NotFoundObjectResult);
             var value = (result as NotFoundObjectResult)?.Value as string;
+
+            Assert.IsNotNull(value);
+            Assert.AreEqual("Такого продукта не существует", value);
+        }
+
+        [DataTestMethod]
+        [DataRow(1, "Milk", 0)]
+        //[DataRow(55, "test")]
+        //[DataRow(666, "second")]
+        public void EditProductWrongPrice(int id, string name, double price)
+        {
+            var productDto = new ProductDto(id, name, (decimal)price);
+            var result = controller.EditProduct(productDto);
+
+            Assert.IsTrue(result is BadRequestObjectResult);
+            var value = (result as BadRequestObjectResult)?.Value as string;
             Assert.IsNotNull(value);
             Assert.AreEqual("Не задана новая цена", value);
         }
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow(1, "Chiken", 25)]
       //[DataRow(2, "changed 2")]
-        public void EditProductSuccess(int id, string name, decimal price)
+        public void EditProductSuccess(int id, string name, double price)
         {
-            var productDto = new ProductDto(id, name, price);
+            var productDto = new ProductDto(id, name, (decimal)price);
             var result = controller.EditProduct(productDto);
 
             Assert.IsTrue(result is OkResult);

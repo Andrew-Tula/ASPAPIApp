@@ -7,12 +7,9 @@ using ASPAPI.Tests.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Newtonsoft.Json.Linq;
 using System.Data;
-using System.Net;
 
-namespace ASPAPI.Tests.ControllerTests
-{
+namespace ASPAPI.Tests.ControllerTests {
     [TestClass]
     public class StoreControllerTests
     {
@@ -53,59 +50,55 @@ namespace ASPAPI.Tests.ControllerTests
             Assert.AreEqual(expectedResult, resultText);
         }
 
-        [TestMethod]
         // public void AddStoreEmptyNameCheck() => AddStoreBadRequestObjectResultCheck("", "Lenina_str_50 ", "Укажите название");
         [DataTestMethod]
         [DataRow("", "The_Red_Square_1")]
         [DataRow("", "The_Kremlin_1")]
         [DataRow("", "Buckenheim Palace")]
-        public void AddStoreEmptyNameCheck(string Name, string Address, string expectedResult)
+        public void AddStoreEmptyNameCheck(string Name, string Address)
         {
             var storeDto = new StoreDto(Name, Address);
             var result = controller.AddStore(storeDto);
             Assert.IsTrue(result is BadRequestObjectResult);
 
             var resultText = (result as BadRequestObjectResult)?.Value as string;
-            Assert.AreEqual(expectedResult, resultText);
+            Assert.AreEqual("Укажите название", resultText);
         }
 
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow("Spar", "")]
         [DataRow("Romashka", "")]
-        public void AddStoreEmptyAddressCheck(string Name, string Address, string expectedResult)
+        public void AddStoreEmptyAddressCheck(string name, string address)
         { 
-            var storeDto = new StoreDto(Name, Address);
+            var storeDto = new StoreDto(name, address);
             var result = controller.AddStore(storeDto);
             Assert.IsTrue(result is BadRequestObjectResult);
 
             var resultText = (result as BadRequestObjectResult)?.Value as string;
-            Assert.AreEqual(expectedResult, resultText);
+            Assert.AreEqual("Укажите адрес", resultText);
         }
 
         //  Вообще вопрос - такое вообще-то ловится здесь ?!
-        [TestMethod]
         [DataTestMethod]
         [DataRow("", "")]
         [DataRow("", "")]
-        public void AddStoreEmptyAddresAndNameCheck(string Name, string Address, string expectedResult)
+        public void AddStoreEmptyAddresAndNameCheck(string name, string address)
         {
-            var storeDto = new StoreDto(Name, Address);
+            var storeDto = new StoreDto(name, address);
             var result = controller.AddStore(storeDto);
             Assert.IsTrue(result is BadRequestObjectResult);
 
             var resultText = (result as BadRequestObjectResult)?.Value as string;
-            Assert.AreEqual(expectedResult, resultText);
+            Assert.AreEqual("Укажите название", resultText);
         }
 
-        [TestMethod]
         [DataTestMethod]
-        [DataRow("старший продавец")]
-        [DataRow("кассир")]
-        public void AddStoreSuccess(string Name, string Address)
+        [DataRow("Магазин1", "Тула")]
+        [DataRow("Спортовары", "Москва")]
+        public void AddStoreSuccess(string name, string address)
         {
-            var storeDto = new StoreDto(Name, Address);
+            var storeDto = new StoreDto(name, address);
             var result = controller.AddStore(storeDto);
             Assert.IsTrue(result is OkResult);
         }
@@ -126,7 +119,6 @@ namespace ASPAPI.Tests.ControllerTests
 
         }
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow(-10)]
         //[DataRow(20)]
@@ -142,7 +134,6 @@ namespace ASPAPI.Tests.ControllerTests
            // Assert.AreEqual("Магазин не найден", value);
         }
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow(1)]
         [DataRow(2)]
