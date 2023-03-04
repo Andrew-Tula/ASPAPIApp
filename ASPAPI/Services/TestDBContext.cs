@@ -13,5 +13,6 @@ namespace ASPAPI.Services {
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
         public virtual DbSet<StoreProduct> StoreProducts { get; set; }
+        public virtual DbSet<UserToken> UserTokens { get; set; }
     }
 }

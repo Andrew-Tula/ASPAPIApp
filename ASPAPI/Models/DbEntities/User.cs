@@ -8,6 +8,9 @@ namespace ASPAPI.Models.DbEntities {
         public int Id { get; set; }
         public string Name { get; set; }
 
+        public string Salt { get; set; }
+        public string Hash { get; set; }
+
         [ForeignKey(nameof(RoleId))]
         public int RoleId { get; set; }
         [JsonIgnore]
@@ -15,6 +18,9 @@ namespace ASPAPI.Models.DbEntities {
 
         [JsonIgnore]
         public List<Order> Orders { get; set; }
+
+        [JsonIgnore]
+        public UserToken UserTokens { get; set; }
 #nullable restore
     }
 }

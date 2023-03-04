@@ -3,6 +3,7 @@ using System;
 using ASPAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ASPAPI.Migrations
 {
     [DbContext(typeof(TestDBContext))]
-    partial class TestDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230304084001_UserPassword")]
+    partial class UserPassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,32 +182,6 @@ namespace ASPAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ASPAPI.Models.DbEntities.UserToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("RefreshToken")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserTokens");
-                });
-
             modelBuilder.Entity("ASPAPI.Models.DbEntities.Order", b =>
                 {
                     b.HasOne("ASPAPI.Models.DbEntities.User", "User")
@@ -263,17 +240,6 @@ namespace ASPAPI.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("ASPAPI.Models.DbEntities.UserToken", b =>
-                {
-                    b.HasOne("ASPAPI.Models.DbEntities.User", "User")
-                        .WithOne("UserTokens")
-                        .HasForeignKey("ASPAPI.Models.DbEntities.UserToken", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ASPAPI.Models.DbEntities.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -302,8 +268,6 @@ namespace ASPAPI.Migrations
             modelBuilder.Entity("ASPAPI.Models.DbEntities.User", b =>
                 {
                     b.Navigation("Orders");
-
-                    b.Navigation("UserTokens");
                 });
 #pragma warning restore 612, 618
         }
