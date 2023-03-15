@@ -1,4 +1,5 @@
 ﻿using ASPAPI.Controllers;
+using ASPAPI.Migrations;
 using ASPAPI.Models.DbEntities;
 using ASPAPI.Repositories;
 using ASPAPI.Services;
@@ -76,10 +77,9 @@ namespace ASPAPI.Tests.ControllerTests
             controller = new OrderItemController(orderItemRepository, storeProductRepository);
         }
 
-        private void AddOrderItemBadRequestObjectResultCheck(int productCount, int storeProductId, int orderid, string expectedResult)
+        private void AddOrderItemBadRequestObjectResultCheck(OrderItemDto data, string expectedResult)
         {
-            var OrderItemDto = new OrderItemDto(productCount, storeProductId, orderid);
-            var result = controller.AddOrderItem(OrderItemDto);
+            var result = controller.AddOrderItem(data);
             Assert.IsTrue(result is BadRequestObjectResult);
 
             var resultText = (result as BadRequestObjectResult)?.Value as string;
@@ -87,99 +87,127 @@ namespace ASPAPI.Tests.ControllerTests
         }
 
         [TestMethod]
-        public void AddOrderItemEmptyNameCheck() => AddOrderItemBadRequestObjectResultCheck( , , , "Заполните название / никнейм заказа");
-
-        public void AddOrderUserNotFoundCheck() => AddOrderItemBadRequestObjectResultCheck("Set15", 500, "Пользовательне найден");
-
-        [TestMethod]
-        [DataTestMethod]
-        [DataRow("Set1", 1)]
-        [DataRow("Set2", 1)]
-        [DataRow("Snikers", 2)]
-        [DataRow("Mars", 3)]
-        public void AddOrderSucces(string name, int userid)
+        public void AddOrderItemEmptyDataCheck()
         {
-            var orderBaseDto = new OrderBaseDto(name, userid);
-            var result = controller.AddOrder(orderBaseDto);
-            Assert.IsTrue(result is OkResult);
+            AddOrderItemBadRequestObjectResultCheck(null, "Пустое поле данных");
         }
 
-        [TestMethod]
-        public void GetOrderSuccess()
+        [DataTestMethod]
+        [DataRow(0, 1, 2)]
+        [DataRow(-1, 1, 2)]
+        [DataRow(-105, 2, 1)]
+        public void AddOrderUserItemNotFoundCheck(int productCount, int storeProductId, int orderid)
         {
-            var result = controller.GetOrder();
+            var orderItemDto = new OrderItemDto(productCount, storeProductId, orderid);
+            var result = controller.AddOrderItem(orderItemDto);
+            var expectedResult = "Количество товара не может быть нулевым или отрицательным";
+            Assert.AreEqual(result, expectedResult);
+        }
+
+        [DataTestMethod]
+        [DataRow(1, 0, 1)]
+        [DataRow(1, 9999999, 2)]
+        public void ProductDoesNotExist(int productCount, int storeProduct, int orderId)
+        {
+            var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
+            var result = controller.AddOrderItem(orderItemDto);
+            var expectedResult = "Продукт не существует";
+            Assert.AreEqual(result, expectedResult);
+        }
+
+        // =====================   ??????????????????????????????????    ===============================
+        //    if (storeProduct.StoreCount<data.productCount)
+        //    return BadRequest("Нет достаточного количества продукта в магазине");
+
+        [DataTestMethod]
+        [DataRow(1, 1, 0)]
+        [DataRow(1, 2, 900000)]
+        public void OrderDoesNotExist(int productCount, int storeProduct, int orderId)
+        {
+            var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
+            var result = controller.AddOrderItem(orderItemDto);
+            var expectedResult = "Заказ не существует";
+            Assert.AreEqual(result, expectedResult);
+        }
+
+
+
+        [TestMethod]
+        public void GetOrderItemSuccess()
+        {
+            var result = controller.GetOrderItem();
             Assert.IsTrue(result is OkObjectResult);
-            var values = (result as OkObjectResult)?.Value as List<Order>;
+            var values = (result as OkObjectResult)?.Value as List<OrderItem>;
 
             Assert.IsNotNull(values);
             Assert.IsTrue(values.Count == 4);
-            Assert.AreEqual(values[0].Name, orders.First().Name);
-            Assert.AreEqual(values[3].Name, orders.Last().Name);
+            Assert.AreEqual(values[0].ProductCount, orderItems.First().ProductCount);
+            Assert.AreEqual(values[3].ProductCount, orderItems.Last().ProductCount);
         }
 
-        [DataTestMethod]
-        [DataRow(10)]
-        [DataRow(20)]
-        [DataRow(555)]
-        [DataRow(1000)]
-        [DataRow(-2)]
-        public void DeleteOrderNotFound(int id)
-        {
-            var result = controller.DeleteOrder(id);
+        //[DataTestMethod]
+        //[DataRow(10)]
+        //[DataRow(20)]
+        //[DataRow(555)]
+        //[DataRow(1000)]
+        //[DataRow(-2)]
+        //public void DeleteOrderNotFound(int id)
+        //{
+        //    var result = controller.DeleteOrder(id);
 
-            Assert.IsTrue(result is NotFoundObjectResult);
-            var value = (result as NotFoundObjectResult)?.Value as string;
-            Assert.IsNotNull(value);
-            Assert.AreEqual("Такого заказа не существует", value);
-        }
+        //    Assert.IsTrue(result is NotFoundObjectResult);
+        //    var value = (result as NotFoundObjectResult)?.Value as string;
+        //    Assert.IsNotNull(value);
+        //    Assert.AreEqual("Такого заказа не существует", value);
+        //}
 
-        [DataTestMethod]
-        [DataRow(1)]
-        [DataRow(2)]
-        [DataRow(3)]
-        public void DeleteOrderSuccess(int id)
-        {
-            var result = controller.DeleteOrder(id);
-            Assert.IsTrue(result is OkResult);
-        }
+        //[DataTestMethod]
+        //[DataRow(1)]
+        //[DataRow(2)]
+        //[DataRow(3)]
+        //public void DeleteOrderSuccess(int id)
+        //{
+        //    var result = controller.DeleteOrder(id);
+        //    Assert.IsTrue(result is OkResult);
+        //}
 
 
-        [TestMethod]
-        [DataRow(1000, "Soup")]
-        [DataRow(1101, "Cigarette")]
-        [DataRow(2220, "Tabacco")]
-        [DataRow(-10, "Wiskey")]
+        //[TestMethod]
+        //[DataRow(1000, "Soup")]
+        //[DataRow(1101, "Cigarette")]
+        //[DataRow(2220, "Tabacco")]
+        //[DataRow(-10, "Wiskey")]
 
-        public void EditOrderNotSet(int id, string name)
-        {
-            var orderDto = new OrderDto(id, name);
+        //public void EditOrderNotSet(int id, string name)
+        //{
+        //    var orderDto = new OrderDto(id, name);
 
-            var result = controller.EditOrder(orderDto);
+        //    var result = controller.EditOrder(orderDto);
 
-            Assert.IsTrue(result is NotFoundObjectResult);
-            var value = (result as NotFoundObjectResult)?.Value as string;
+        //    Assert.IsTrue(result is NotFoundObjectResult);
+        //    var value = (result as NotFoundObjectResult)?.Value as string;
 
-            Assert.IsNotNull(value);
-            Assert.AreEqual("Такого заказа не существует", value);
-        }
+        //    Assert.IsNotNull(value);
+        //    Assert.AreEqual("Такого заказа не существует", value);
+        //}
 
-        [TestMethod]
-        [DataRow(1, "")]
-        [DataRow(2, "")]
-        [DataRow(3, "")]
-        [DataRow(4, "")]
+        //[TestMethod]
+        //[DataRow(1, "")]
+        //[DataRow(2, "")]
+        //[DataRow(3, "")]
+        //[DataRow(4, "")]
 
-        public void EditOrderNotSettedName(int id, string name)
-        {
-            var orderDto = new OrderDto(id, name);
+        //public void EditOrderNotSettedName(int id, string name)
+        //{
+        //    var orderDto = new OrderDto(id, name);
 
-            var result = controller.EditOrder(orderDto);
+        //    var result = controller.EditOrder(orderDto);
 
-            Assert.IsTrue(result is BadRequestObjectResult);
-            var value = (result as BadRequestObjectResult)?.Value as string;
+        //    Assert.IsTrue(result is BadRequestObjectResult);
+        //    var value = (result as BadRequestObjectResult)?.Value as string;
 
-            Assert.IsNotNull(value);
-            Assert.AreEqual("Заполните название / никнейм заказа", value);
-        }
+        //    Assert.IsNotNull(value);
+        //    Assert.AreEqual("Заполните название / никнейм заказа", value);
+        //}
     }
 }

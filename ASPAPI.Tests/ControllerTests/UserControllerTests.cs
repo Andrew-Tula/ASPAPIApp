@@ -147,6 +147,7 @@ namespace ASPAPI.Tests.ControllerTests {
             Assert.AreEqual("Такого пользователя не существует", value);
         }
 
+
         [DataTestMethod]
         [DataRow(1, "BigBoss", -100)]
         [DataRow(2, "Vasia", 500)]
