@@ -64,9 +64,9 @@ namespace ASPAPI.Tests.ControllerTests {
         [TestMethod]
         public void AddOrderEmptyNameCheck() => AddOrderBadRequestObjectResultCheck("", 1, "Заполните название / никнейм заказа");
 
+        [TestMethod]
         public void AddOrderUserNotFoundCheck() => AddOrderBadRequestObjectResultCheck("Set15", 500, "Пользовательне найден");
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow("Set1", 1)]
         [DataRow("Set2", 1)]
@@ -115,7 +115,7 @@ namespace ASPAPI.Tests.ControllerTests {
         }
 
 
-        [TestMethod]
+        [DataTestMethod]
         [DataRow(1000, "Soup")]
         [DataRow(1101, "Cigarette")]
         [DataRow(2220, "Tabacco")]
@@ -133,7 +133,7 @@ namespace ASPAPI.Tests.ControllerTests {
             Assert.AreEqual("Такого заказа не существует", value);
         }
 
-        [TestMethod]
+        [DataTestMethod]
         [DataRow(1, "")]
         [DataRow(2, "")]
         [DataRow(3, "")]

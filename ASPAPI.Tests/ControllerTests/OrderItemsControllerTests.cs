@@ -122,7 +122,7 @@ namespace ASPAPI.Tests.ControllerTests
         [DataTestMethod]
         [DataRow(1, 1, 0)]
         [DataRow(1, 2, 900000)]
-        public void OrderDoesNotExist(int productCount, int storeProduct, int orderId)
+        public void OrderItemDoesNotExist(int productCount, int storeProduct, int orderId)
         {
             var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
             var result = controller.AddOrderItem(orderItemDto);
@@ -144,6 +144,18 @@ namespace ASPAPI.Tests.ControllerTests
             Assert.AreEqual(values[0].ProductCount, orderItems.First().ProductCount);
             Assert.AreEqual(values[3].ProductCount, orderItems.Last().ProductCount);
         }
+
+        [DataTestMethod]
+        [DataRow(1, 1, 2)]
+        [DataRow(15, 2, 1)]
+        public void AddOrderItemSuccess(int productCount, int storeProduct, int orderId)
+        {
+            var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
+            var result = controller.AddOrderItem(orderItemDto);
+            Assert.IsTrue(result is OkResult);
+        }
+
+
 
         //[DataTestMethod]
         //[DataRow(10)]
