@@ -96,40 +96,57 @@ namespace ASPAPI.Tests.ControllerTests
         [DataRow(0, 1, 2)]
         [DataRow(-1, 1, 2)]
         [DataRow(-105, 2, 1)]
-        public void AddOrderUserItemNotFoundCheck(int productCount, int storeProductId, int orderid)
+        public void AddOrderItem_NotEnoughProductCheck(int productCount, int storeProductId, int orderid)
         {
             var orderItemDto = new OrderItemDto(productCount, storeProductId, orderid);
             var result = controller.AddOrderItem(orderItemDto);
             var expectedResult = "Количество товара не может быть нулевым или отрицательным";
-            Assert.AreEqual(result, expectedResult);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
         }
 
         [DataTestMethod]
-        [DataRow(1, 0, 1)]
+        [DataRow(1, -1, 1)]
         [DataRow(1, 9999999, 2)]
-        public void ProductDoesNotExist(int productCount, int storeProduct, int orderId)
+        public void AddOrderItem_ProductDoesNotExist(int productCount, int storeProduct, int orderId)
         {
             var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
             var result = controller.AddOrderItem(orderItemDto);
             var expectedResult = "Продукт не существует";
-            Assert.AreEqual(result, expectedResult);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
         }
 
-        // =====================   ??????????????????????????????????    ===============================
-        // как сравнить в тесте данные разных контроллеров ?
-        // 
-        //    if (storeProduct.StoreCount<data.productCount)
-        //    return BadRequest("Нет достаточного количества продукта в магазине");
 
         [DataTestMethod]
-        [DataRow(1, 1, 0)]
+        [DataRow(10101010, 1, 1)]
+        [DataRow(11111111, 2, 2)]
+        public void OrderItem_NotEnoughProduct(int productCount, int storeProduct, int orderId)
+        {
+            var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
+            var result = controller.AddOrderItem(orderItemDto);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            var expectedResult = "Нет достаточного количества продукта в магазине";
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
+        }
+
+        //******************
+
+
+        [DataTestMethod]
+        [DataRow(1, 1, -5)]
         [DataRow(1, 2, 900000)]
         public void OrderItemDoesNotExist(int productCount, int storeProduct, int orderId)
         {
             var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
             var result = controller.AddOrderItem(orderItemDto);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            Assert.IsNotNull(value);
             var expectedResult = "Заказ не существует";
-            Assert.AreEqual(result, expectedResult);
+            Assert.AreEqual(value, expectedResult);
         }
 
 
@@ -151,6 +168,8 @@ namespace ASPAPI.Tests.ControllerTests
         [DataRow(1, 1, 2)]
         [DataRow(3, 1, 1)]
         [DataRow(100, 3, 1)]
+        [DataRow(2, 2, 1)]
+        [DataRow(5, 2, 1)]
         public void AddOrderItemSuccess(int productCount, int storeProduct, int orderId)
         {
             var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
@@ -179,7 +198,7 @@ namespace ASPAPI.Tests.ControllerTests
         }
 
 
-        // -----------------
+       
         private void EditOrderItemBadRequestObjectResultCheck(OrderItemChangeDto data, string expectedResult)
         {
             var result = controller.EditOrderItem(data);
@@ -204,7 +223,9 @@ namespace ASPAPI.Tests.ControllerTests
             var orderItemChangeDto = new OrderItemChangeDto(orderItemId, productCount);
             var result = controller.EditOrderItem(orderItemChangeDto);
             var expectedResult = "Количество товара не может быть нулевым или отрицательным";
-            Assert.AreEqual(result, expectedResult);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
         }
 
         [DataTestMethod]
@@ -216,8 +237,19 @@ namespace ASPAPI.Tests.ControllerTests
             var orderItemChangeDto = new OrderItemChangeDto(orderItemId, productCount);
             var result = controller.EditOrderItem(orderItemChangeDto);
             var expectedResult = "Элемент заказа не найден";
-            Assert.AreEqual(result, expectedResult);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
         }
 
+        [DataTestMethod]
+        [DataRow(1, 3)]
+        [DataRow(2, 4)]
+        public void EditOrderItemSuccess(int orderItemId, int productCount)
+        {
+            var orderItemChangeDto = new OrderItemChangeDto(orderItemId, productCount);
+            var result = controller.EditOrderItem(orderItemChangeDto);
+            Assert.IsTrue(result is OkResult);
+        }
     }
 }
