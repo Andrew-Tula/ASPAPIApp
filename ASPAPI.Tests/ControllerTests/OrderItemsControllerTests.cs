@@ -116,6 +116,8 @@ namespace ASPAPI.Tests.ControllerTests
         }
 
         // =====================   ??????????????????????????????????    ===============================
+        // как сравнить в тесте данные разных контроллеров ?
+        // 
         //    if (storeProduct.StoreCount<data.productCount)
         //    return BadRequest("Нет достаточного количества продукта в магазине");
 
@@ -147,7 +149,8 @@ namespace ASPAPI.Tests.ControllerTests
 
         [DataTestMethod]
         [DataRow(1, 1, 2)]
-        [DataRow(15, 2, 1)]
+        [DataRow(3, 1, 1)]
+        [DataRow(100, 3, 1)]
         public void AddOrderItemSuccess(int productCount, int storeProduct, int orderId)
         {
             var orderItemDto = new OrderItemDto(productCount, storeProduct, orderId);
@@ -155,71 +158,66 @@ namespace ASPAPI.Tests.ControllerTests
             Assert.IsTrue(result is OkResult);
         }
 
+        [DataTestMethod]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(3)]
+        public void DeleteOrderItemSuccess(int orderItemId)
+        {
+            var result = controller.DeleteOrderItem(orderItemId);
+            Assert.IsTrue(result is OkResult);
+        }
+
+        public void DeleteOrderItemNotFound(int orderItemId)
+        {
+            var result = controller.DeleteOrderItem(orderItemId);
+
+            Assert.IsTrue(result is NotFoundObjectResult);
+            var value = (result as NotFoundObjectResult)?.Value as string;
+            Assert.IsNotNull(value);
+            Assert.AreEqual("Нет такого продукта", value);
+        }
 
 
-        //[DataTestMethod]
-        //[DataRow(10)]
-        //[DataRow(20)]
-        //[DataRow(555)]
-        //[DataRow(1000)]
-        //[DataRow(-2)]
-        //public void DeleteOrderNotFound(int id)
-        //{
-        //    var result = controller.DeleteOrder(id);
+        // -----------------
+        private void EditOrderItemBadRequestObjectResultCheck(OrderItemChangeDto data, string expectedResult)
+        {
+            var result = controller.EditOrderItem(data);
+            Assert.IsTrue(result is BadRequestObjectResult);
 
-        //    Assert.IsTrue(result is NotFoundObjectResult);
-        //    var value = (result as NotFoundObjectResult)?.Value as string;
-        //    Assert.IsNotNull(value);
-        //    Assert.AreEqual("Такого заказа не существует", value);
-        //}
+            var resultText = (result as BadRequestObjectResult)?.Value as string;
+            Assert.AreEqual(expectedResult, resultText);
+        }
 
-        //[DataTestMethod]
-        //[DataRow(1)]
-        //[DataRow(2)]
-        //[DataRow(3)]
-        //public void DeleteOrderSuccess(int id)
-        //{
-        //    var result = controller.DeleteOrder(id);
-        //    Assert.IsTrue(result is OkResult);
-        //}
+        [TestMethod]
+        public void EditOrderItemEmptyDataCheck()
+        {
+            EditOrderItemBadRequestObjectResultCheck(null, "Не заполнены поля для изменения");
+        }
+        //--
 
+        [DataTestMethod]
+        [DataRow(1, 0)]
+        [DataRow(2, -10)]
+        public void EditOrderUserItemZeroProductCountCheck(int orderItemId, int productCount)
+        {
+            var orderItemChangeDto = new OrderItemChangeDto(orderItemId, productCount);
+            var result = controller.EditOrderItem(orderItemChangeDto);
+            var expectedResult = "Количество товара не может быть нулевым или отрицательным";
+            Assert.AreEqual(result, expectedResult);
+        }
 
-        //[TestMethod]
-        //[DataRow(1000, "Soup")]
-        //[DataRow(1101, "Cigarette")]
-        //[DataRow(2220, "Tabacco")]
-        //[DataRow(-10, "Wiskey")]
+        [DataTestMethod]
+        [DataRow(0, 1)]
+        [DataRow(-5, 2)]
+        [DataRow(99999999, 1)]
+        public void EditOrderUserItem_NotFoundOrderCheck(int orderItemId, int productCount)
+        {
+            var orderItemChangeDto = new OrderItemChangeDto(orderItemId, productCount);
+            var result = controller.EditOrderItem(orderItemChangeDto);
+            var expectedResult = "Элемент заказа не найден";
+            Assert.AreEqual(result, expectedResult);
+        }
 
-        //public void EditOrderNotSet(int id, string name)
-        //{
-        //    var orderDto = new OrderDto(id, name);
-
-        //    var result = controller.EditOrder(orderDto);
-
-        //    Assert.IsTrue(result is NotFoundObjectResult);
-        //    var value = (result as NotFoundObjectResult)?.Value as string;
-
-        //    Assert.IsNotNull(value);
-        //    Assert.AreEqual("Такого заказа не существует", value);
-        //}
-
-        //[TestMethod]
-        //[DataRow(1, "")]
-        //[DataRow(2, "")]
-        //[DataRow(3, "")]
-        //[DataRow(4, "")]
-
-        //public void EditOrderNotSettedName(int id, string name)
-        //{
-        //    var orderDto = new OrderDto(id, name);
-
-        //    var result = controller.EditOrder(orderDto);
-
-        //    Assert.IsTrue(result is BadRequestObjectResult);
-        //    var value = (result as BadRequestObjectResult)?.Value as string;
-
-        //    Assert.IsNotNull(value);
-        //    Assert.AreEqual("Заполните название / никнейм заказа", value);
-        //}
     }
 }

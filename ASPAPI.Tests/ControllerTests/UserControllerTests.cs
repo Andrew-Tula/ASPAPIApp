@@ -61,7 +61,6 @@ namespace ASPAPI.Tests.ControllerTests {
         public void AddUserEmptyNameCheck() => AddUserBadRequestObjectResultCheck("", 1, "Заполните данные");
 
 
-        [TestMethod]
         [DataTestMethod]
         [DataRow("gaagg", 1)]
         [DataRow("Fedia", 2)]
