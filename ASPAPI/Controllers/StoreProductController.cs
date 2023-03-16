@@ -56,15 +56,7 @@ namespace ASPAPI.Controllers {
             storeProductRepository.Add(storeProduct);
             return Ok();
         }
-        //[HttpDelete]                       ВИДИМО, МЕТОД удаления НЕ ИМЕЕТ СМЫСЛА ?
-        //public IActionResult DeleteStorecount(int id)
-        //{
-        //    var StoreProductToDelete = StoreProductRepository.GetById(id);
-        //    if (StoreProductToDelete == null)
-        //        return NotFound("Такого продукта не существует");
-        //    StoreProductRepository.Remove(StoreProductToDelete);
-        //    return Ok();
-        //}
+    
 
         [HttpPut]
         public IActionResult EditStoreProduct(StoreProductDTO data)
