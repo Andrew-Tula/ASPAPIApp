@@ -177,9 +177,23 @@ namespace ASPAPI.Tests.ControllerTests
             var storeProductDTO = new StoreProductDTO(productCount, storeProduct, orderId);
             var result = controller.EditStoreProduct(storeProductDTO);
             Assert.IsTrue(result is OkResult);
-        }      
-        
+        }
 
+
+        // Туплю. Надо допилить. Данные берутся не из ДТО, ссылочно надо....
+        [DataTestMethod]
+        [DataRow(0, 1, 2)]
+        [DataRow(-5, 1, 1)]
+        [DataRow(9999, 2, 1)]
+        public void EditStoreProductElementIsNotExistCheck(int StoreId, int ProductId, int StoreCount)
+        {
+            var storeProductDTO = new StoreProductDTO( StoreId, ProductId, StoreCount);
+            var result = controller.EditStoreProduct(storeProductDTO);
+            var expectedResult = "Элемент заказа не найден";
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
+        }
 
 
 
