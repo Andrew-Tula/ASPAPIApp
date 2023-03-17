@@ -44,7 +44,7 @@ namespace ASPAPI.Controllers {
             if (product is null)
                 return BadRequest("Нет продукта");
 
-            if (data.StoreCount == 0)
+            if (data.StoreCount <= 0)
                 return BadRequest("Заполните количество товара / продукта");
 
             var storeProduct = new StoreProduct
