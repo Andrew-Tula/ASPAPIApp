@@ -64,5 +64,11 @@ namespace ASPAPI.Tests.ControllerTests {
             var result = controller.TestAuthorization();
             Assert.IsTrue(result is OkObjectResult);
         }
+
+        [TestMethod]
+        public void TestAuthorizationDenied() 
+        {
+
+        }
     }
 }
