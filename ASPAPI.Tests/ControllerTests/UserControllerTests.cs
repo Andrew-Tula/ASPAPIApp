@@ -80,9 +80,9 @@ namespace ASPAPI.Tests.ControllerTests {
             var values = (result as OkObjectResult)?.Value as List<User>;
 
             Assert.IsNotNull(values);
-            Assert.IsTrue(values.Count == 4);
+            Assert.IsTrue(values.Count == 6);
             Assert.AreEqual(values[0].Name, users.First().Name);
-            Assert.AreEqual(values[3].Name, users.Last().Name);
+            Assert.AreEqual(values[5].Name, users.Last().Name);
         }
 
         [DataTestMethod]

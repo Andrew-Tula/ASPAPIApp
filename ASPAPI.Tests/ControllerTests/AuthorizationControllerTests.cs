@@ -151,14 +151,15 @@ namespace ASPAPI.Tests.ControllerTests {
         // посчитать Соль и Хеш, сохранить в Юзере и уж потом сравнивать Соль-Хеш
         // введенного пароля с сохраненными..............
 
-        //[DataTestMethod]
-        //[DataRow("Karl", "456456456")]
-        //public void TestLoginSuccess(string name, string password)
-        //{
-        //    var loginDto = new LoginDto(name, password);
-        //    var result = controller.Login(loginDto);
-        //    Assert.IsTrue(result is OkObjectResult);
-        //}
+        [DataTestMethod]
+        [DataRow("Ola", "12345678")]
+        [DataRow("Mark", "123456789")]
+        public void TestLoginSuccess(string name, string password)
+        {
+            var loginDto = new LoginDto(name, password);
+            var result = controller.Login(loginDto);
+            Assert.IsTrue(result is OkObjectResult);
+        }
 
     }
 }
