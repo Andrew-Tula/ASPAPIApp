@@ -65,10 +65,100 @@ namespace ASPAPI.Tests.ControllerTests {
             Assert.IsTrue(result is OkObjectResult);
         }
 
-        [TestMethod]
-        public void TestAuthorizationDenied() 
+        [DataTestMethod]
+        [DataRow(" ", "12345678", 1)]
+        [DataRow("", "87654321", 2)]
+        [DataRow("Ludovik", " ", 1)]
+        [DataRow("Lenin", "", 2 )]
+        public void TestRegistrationDeniedByNamePassword(string name, string password, int roleId) 
         {
-
+            var registrationDto = new RegistrationDto(name, password, roleId);
+            var result = controller.Registration(registrationDto);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            var expectedResult = "Необходимо указать логин и пароль";
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
         }
+
+        [DataTestMethod]
+        [DataRow("Karl", "456456456 ", 1)]
+        [DataRow("Vasia", "123123131", 2)]
+        public void TestRegistrationDeniedByDoudleName(string name, string password, int roleId)
+        {
+            var registrationDto = new RegistrationDto(name, password, roleId);
+            var result = controller.Registration(registrationDto);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            var expectedResult = "Пользователь с таким названием уже зарегистрирован";
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
+        }
+
+        [DataTestMethod]
+        [DataRow("Vilen", "456456456 ", -1)]
+        [DataRow("Tuzik", "123123131", 15)]
+        public void TestRegistrationDeniedByWrongRole(string name, string password, int roleId)
+        {
+            var registrationDto = new RegistrationDto(name, password, roleId);
+            var result = controller.Registration(registrationDto);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            var expectedResult = "Роль не найдена";
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
+        }
+
+        [DataTestMethod]
+        [DataRow("", "456456456 ")]
+        [DataRow("Tuzik", "")]
+        [DataRow(" ", "886456456 ")]
+        [DataRow("Sharik", " ")]
+        public void TestLoginDeniedByNamePassword(string name, string password)
+        {
+            var loginDto = new LoginDto(name, password);
+            var result = controller.Login(loginDto);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            var expectedResult = "Необходимо указать логин и пароль";
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
+        }
+
+        [DataTestMethod]
+        [DataRow("Sharik", "456456456")]
+        [DataRow("Tuzik", "1123456789")]
+        public void TestLoginDeniedByWrongName(string name, string password)
+        {
+            var loginDto = new LoginDto(name, password);
+            var result = controller.Login(loginDto);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            var expectedResult = "Пользователь не найден";
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
+        }
+
+        [DataTestMethod]
+        [DataRow("Karl", "456456456")]
+        [DataRow("Vasia", "1123456789")]
+        public void TestLoginDeniedByWrongPassword(string name, string password)
+        {
+            var loginDto = new LoginDto(name, password);
+            var result = controller.Login(loginDto);
+            var value = (result as BadRequestObjectResult)?.Value as string;
+            var expectedResult = "Неверный пароль";
+            Assert.IsNotNull(value);
+            Assert.AreEqual(value, expectedResult);
+        }
+
+        // Для успеха прохождения этого теста нужно пароль как-то заранее передать,
+        // посчитать Соль и Хеш, сохранить в Юзере и уж потом сравнивать Соль-Хеш
+        // введенного пароля с сохраненными..............
+
+        //[DataTestMethod]
+        //[DataRow("Karl", "456456456")]
+        //public void TestLoginSuccess(string name, string password)
+        //{
+        //    var loginDto = new LoginDto(name, password);
+        //    var result = controller.Login(loginDto);
+        //    Assert.IsTrue(result is OkObjectResult);
+        //}
+
     }
 }
