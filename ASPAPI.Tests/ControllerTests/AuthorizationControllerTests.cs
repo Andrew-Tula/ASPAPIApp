@@ -69,8 +69,8 @@ namespace ASPAPI.Tests.ControllerTests {
         [DataRow(" ", "12345678", 1)]
         [DataRow("", "87654321", 2)]
         [DataRow("Ludovik", " ", 1)]
-        [DataRow("Lenin", "", 2 )]
-        public void TestRegistrationDeniedByNamePassword(string name, string password, int roleId) 
+        [DataRow("Lenin", "", 2)]
+        public void TestRegistrationDeniedByNamePassword(string name, string password, int roleId)
         {
             var registrationDto = new RegistrationDto(name, password, roleId);
             var result = controller.Registration(registrationDto);
@@ -147,13 +147,11 @@ namespace ASPAPI.Tests.ControllerTests {
             Assert.AreEqual(value, expectedResult);
         }
 
-        // Для успеха прохождения этого теста нужно пароль как-то заранее передать,
-        // посчитать Соль и Хеш, сохранить в Юзере и уж потом сравнивать Соль-Хеш
-        // введенного пароля с сохраненными..............
 
         [DataTestMethod]
         [DataRow("Ola", "12345678")]
         [DataRow("Mark", "123456789")]
+        [DataRow("Gete", "1122334455")]
         public void TestLoginSuccess(string name, string password)
         {
             var loginDto = new LoginDto(name, password);
