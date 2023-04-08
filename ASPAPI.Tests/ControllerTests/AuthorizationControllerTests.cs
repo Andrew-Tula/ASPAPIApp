@@ -53,6 +53,8 @@ namespace ASPAPI.Tests.ControllerTests {
             userTokenRepository.InitDbSet(context.UserTokens);
 
             controller = new AuthorizationController(configuration.Object, userRepository, roleRepository, userTokenRepository);
+
+            //  вот здесь и происходит проверка авторизации 
             controller!.ControllerContext.HttpContext = new DefaultHttpContext {
                 RequestServices = TestHelper.AuthenticationServiceMock(),
                 User = TestHelper.GetClaimsPrincipal("1")

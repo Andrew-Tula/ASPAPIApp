@@ -146,7 +146,7 @@ namespace ASPAPI.Controllers {
         [Authorize]
         [HttpGet]
         public IActionResult TestAuthorization() {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+            var userId = User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
             if (userId is null)
                 return BadRequest("Пользователь не найден");
 
